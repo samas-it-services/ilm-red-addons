@@ -1,0 +1,23 @@
+{
+  "slug": "physics-image-of-day",
+  "name": "Physics Image of the Day",
+  "version": "1.0.0",
+  "icon": "🔭",
+  "entryPoint": "PhysicsImageOfDayAddon",
+  "placement": "overview",
+  "category": "engagement",
+  "permissions": [
+    "net:external"
+  ],
+  "config_schema": {},
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "Today's astronomy & physics images from NASA APOD, NASA Image of the Day, ESO and ESA/Hubble — shown together, with a carousel to browse past days. Every image keeps its source credit and a link to the original.",
+  "privacy_statement": "Displays public science images fetched daily from NASA, ESO and ESA/Hubble. Each image keeps its source's credit and a link to the original page. No personal data is collected or shared.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

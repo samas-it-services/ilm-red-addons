@@ -1,0 +1,21 @@
+{
+  "slug": "mathematician-of-day",
+  "name": "Mathematician of the Day",
+  "version": "1.0.0",
+  "icon": "📐",
+  "entryPoint": "MathematicianOfDayAddon",
+  "placement": "overview",
+  "category": "engagement",
+  "permissions": [],
+  "config_schema": {},
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "A historical or contemporary mathematician each day, with a short factual bio. Curated catalogue, refreshed daily.",
+  "privacy_statement": "Shows one mathematician a day from a curated catalogue. Bios are evergreen and factual; an optional AI-written note is generated server-side. No personal data is collected.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

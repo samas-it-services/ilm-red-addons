@@ -1,0 +1,63 @@
+{
+  "slug": "online-status",
+  "name": "Online Status",
+  "version": "1.0.0",
+  "icon": "👥",
+  "entryPoint": "OnlineStatusAddon",
+  "placement": "decoration",
+  "category": "communication",
+  "permissions": [
+    "read_members",
+    "track_users"
+  ],
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "title": "Enable Status Tracking",
+        "default": true
+      },
+      "showLastSeen": {
+        "type": "boolean",
+        "title": "Show Last Seen",
+        "default": true
+      },
+      "groupByStatus": {
+        "type": "boolean",
+        "title": "Group by Status",
+        "default": true
+      },
+      "showOnlineCount": {
+        "type": "boolean",
+        "title": "Show Online Count",
+        "default": true
+      },
+      "allowPrivateMode": {
+        "type": "boolean",
+        "title": "Allow Private Mode",
+        "default": true
+      },
+      "autoOfflineMinutes": {
+        "type": "number",
+        "title": "Auto-offline Timeout (minutes)",
+        "default": 15
+      },
+      "showActivityStatus": {
+        "type": "boolean",
+        "title": "Show Activity Status",
+        "default": true
+      }
+    }
+  },
+  "is_builtin": true,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "Track and display member online status with privacy controls. See who is active, idle, or offline in real-time.",
+  "privacy_statement": "Shows which members are currently active. Your online status is visible to other members of this club while you browse it; it is never shared outside the club.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

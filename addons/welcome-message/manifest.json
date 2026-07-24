@@ -1,0 +1,68 @@
+{
+  "slug": "welcome-message",
+  "name": "Welcome Message",
+  "version": "1.0.0",
+  "icon": "💬",
+  "entryPoint": "WelcomeMessageAddon",
+  "placement": "decoration",
+  "category": "communication",
+  "permissions": [
+    "read_members",
+    "read_books"
+  ],
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "title": "Welcome Title",
+        "default": "Welcome to our Book Club! 📚"
+      },
+      "enabled": {
+        "type": "boolean",
+        "title": "Enable Welcome Message",
+        "default": true
+      },
+      "message": {
+        "type": "string",
+        "title": "Welcome Message",
+        "default": "We are excited to have you here!"
+      },
+      "dismissible": {
+        "type": "boolean",
+        "title": "Allow Dismissal",
+        "default": true
+      },
+      "showToAllMembers": {
+        "type": "boolean",
+        "title": "Show to All Members",
+        "default": false
+      },
+      "showToNewMembers": {
+        "type": "boolean",
+        "title": "Show to New Members",
+        "default": true
+      },
+      "showBookClubStats": {
+        "type": "boolean",
+        "title": "Show Club Statistics",
+        "default": true
+      },
+      "showUpcomingEvents": {
+        "type": "boolean",
+        "title": "Show Upcoming Events",
+        "default": true
+      }
+    }
+  },
+  "is_builtin": true,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "Display customizable welcome messages to new and existing members. Include club stats, upcoming events, and personalized greetings.",
+  "privacy_statement": "Shows a welcome message to new members. No personal data is collected or shared outside this club.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

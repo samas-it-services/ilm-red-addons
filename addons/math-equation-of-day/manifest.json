@@ -1,0 +1,21 @@
+{
+  "slug": "math-equation-of-day",
+  "name": "Math Equation of the Day",
+  "version": "1.0.0",
+  "icon": "➗",
+  "entryPoint": "MathEquationOfDayAddon",
+  "placement": "overview",
+  "category": "engagement",
+  "permissions": [],
+  "config_schema": {},
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "A famous equation each day, beautifully rendered, with a note on why it matters. Curated catalogue, refreshed daily.",
+  "privacy_statement": "Shows one famous equation a day from a curated catalogue, rendered with KaTeX. An optional AI-written note is generated server-side. No personal data is collected.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

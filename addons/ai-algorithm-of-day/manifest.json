@@ -1,0 +1,21 @@
+{
+  "slug": "ai-algorithm-of-day",
+  "name": "AI Algorithm of the Day",
+  "version": "1.0.0",
+  "icon": "🧠",
+  "entryPoint": "AiAlgorithmOfDayAddon",
+  "placement": "overview",
+  "category": "engagement",
+  "permissions": [],
+  "config_schema": {},
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "A different machine-learning algorithm or method each day, with a plain-words explainer. Curated catalogue, refreshed daily.",
+  "privacy_statement": "Shows one item a day from a curated catalogue of ML algorithms. An optional AI-written explainer is generated server-side. No personal data is collected.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

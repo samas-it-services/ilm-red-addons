@@ -1,0 +1,21 @@
+{
+  "slug": "ai-startup-of-day",
+  "name": "AI Startup of the Day",
+  "version": "1.0.0",
+  "icon": "🚀",
+  "entryPoint": "AiStartupOfDayAddon",
+  "placement": "overview",
+  "category": "engagement",
+  "permissions": [],
+  "config_schema": {},
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "A notable AI company or lab each day, with a neutral, factual note on what they build. Curated catalogue, refreshed daily.",
+  "privacy_statement": "Shows one item a day from a curated, human-written catalogue of AI companies/labs. Notes are evergreen and factual. No personal data is collected.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

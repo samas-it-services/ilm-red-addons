@@ -1,0 +1,21 @@
+{
+  "slug": "math-puzzle-of-day",
+  "name": "Math Puzzle of the Day",
+  "version": "1.0.0",
+  "icon": "🧩",
+  "entryPoint": "MathPuzzleOfDayAddon",
+  "placement": "overview",
+  "category": "engagement",
+  "permissions": [],
+  "config_schema": {},
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "A self-contained maths puzzle each day, with a hidden answer and worked solution you can reveal. Curated bank, refreshed daily.",
+  "privacy_statement": "Shows one puzzle a day from a curated, human-verified bank. The answer and solution are stored with the puzzle and revealed on click. No personal data is collected.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}
