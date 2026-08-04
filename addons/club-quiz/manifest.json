@@ -1,0 +1,32 @@
+{
+  "slug": "club-quiz",
+  "name": "Knowledge Quiz",
+  "version": "1.0.0",
+  "icon": "🧠",
+  "entryPoint": "ClubQuizAddon",
+  "placement": "tab",
+  "category": "general",
+  "permissions": [
+    "read_books"
+  ],
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "levels": {
+        "type": "object",
+        "title": "Custom question set",
+        "description": "Optional override of the built-in set: { beginner:[{q,options,answer,explain}], intermediate:[...], expert:[...] }"
+      }
+    }
+  },
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "A per-level knowledge quiz for a club: ten questions each at Beginner, Intermediate and Expert, with an explanation on a wrong answer and a total score. Signed-in readers save their attempt and the club shows global stats. Ships a built-in Cryptography set; a curator can supply their own questions in config.",
+  "privacy_statement": "Runs in your browser. When you are signed in, your result (level, score, total) is saved so the club can show aggregate stats (attempts, averages); individual answers are never stored. Signed-out readers see only the aggregates.",
+  "source": {
+    "repo": "samas-it-services/ilm-red-unbound",
+    "note": "Reference mirror — do not edit here."
+  }
+}

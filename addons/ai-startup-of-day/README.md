@@ -46,6 +46,13 @@ _No configurable settings._
 ## Files
 
 - `../_shared/DailyContentCard.tsx` — shared surface (`src/components/bookclubs/DailyContentCard.tsx`), used by all six "X of the Day" cards.
+- `../_shared/addons/daily/AlgorithmBody.tsx` — shared surface (`src/components/bookclubs/addons/daily/AlgorithmBody.tsx`), used by all six "X of the Day" cards.
+- `../_shared/addons/daily/DatasetBody.tsx` — shared surface (`src/components/bookclubs/addons/daily/DatasetBody.tsx`), used by all six "X of the Day" cards.
+- `../_shared/addons/daily/StartupBody.tsx` — shared surface (`src/components/bookclubs/addons/daily/StartupBody.tsx`), used by all six "X of the Day" cards.
+- `../_shared/addons/daily/KnnScatter.tsx` — shared surface (`src/components/bookclubs/addons/daily/KnnScatter.tsx`), used by all six "X of the Day" cards.
+- `../_shared/addons/daily/DailyTabs.tsx` — shared surface (`src/components/bookclubs/addons/daily/DailyTabs.tsx`), used by all six "X of the Day" cards.
+- `../_shared/addons/daily/parts.tsx` — shared surface (`src/components/bookclubs/addons/daily/parts.tsx`), used by all six "X of the Day" cards.
+- `../_shared/addons/daily/DailyCardPage.tsx` — shared surface (`src/components/bookclubs/addons/daily/DailyCardPage.tsx`), used by all six "X of the Day" cards.
 - `manifest.json` — the registry/manifest facts for this add-on.
 - `ai-startup-of-day.sql` — genericized `addon_registry` INSERT + tables it needs (`:club_id` placeholder, no real UUIDs).
 

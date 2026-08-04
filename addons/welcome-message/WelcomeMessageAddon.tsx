@@ -18,6 +18,7 @@ import { AddonComponentProps } from '@/types/addon';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { sanitizeHtml } from '@/utils/sanitizeHtml';
 
 interface WelcomeStats {
   totalMembers: number;
@@ -713,7 +714,7 @@ export default function WelcomeMessageAddon({
               </CardTitle>
               <p className={cn('text-sm mt-1 opacity-80', welcomeConfig.textColor)}>
                 {/^\s*<([a-z][\s\S]*?)>/i.test(getWelcomeMessage()) ? (
-                  <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: getWelcomeMessage() }} />
+                  <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(getWelcomeMessage()) }} />
                 ) : (
                   <div className="prose prose-sm max-w-none">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
