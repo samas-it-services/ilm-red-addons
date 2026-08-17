@@ -282,7 +282,7 @@ export default function OnlineStatusAddon({ bookClubId, addonId, config, context
     const activities = [
       'Reading "The Great Gatsby"',
       'In book discussion',
-      'Browsing library',
+      'Browsing the bookshelf',
       'Writing review',
       'Checking notifications'
     ];

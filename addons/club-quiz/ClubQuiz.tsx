@@ -3,7 +3,10 @@
  *
  * Reusable: questions come from the add-on's config (book_club_addons.config.levels) when present,
  * otherwise the built-in Cryptography set ships as the default so the add-on works the moment it is
- * enabled. Self-gates on useClubAddonEnabled so it renders nothing unless the club has it on.
+ * enabled. A club may hold SEVERAL quizzes at once — one per blog post, keyed by
+ * book_club_addons.instance_key (migration 20260823000007) — in which case a picker appears and the
+ * newest install is shown first. Deep-linkable as ?quiz=<post-slug>. Attempts and stats are scoped
+ * to the chosen instance, so two essays' scores never pool. Self-gates on useClubAddonEnabled so it renders nothing unless the club has it on.
  * Ten questions per level, an explanation on a wrong answer, and a total score at the end. On
  * completion a signed-in reader's attempt is saved via record_quiz_attempt and the club's global
  * stats for that level are shown; signed-out readers still see the aggregates via club_quiz_stats.
@@ -19,6 +22,9 @@ interface QuizQ { q: string; options: string[]; answer: number; explain: string 
 type Level = 'beginner' | 'intermediate' | 'expert';
 type QuizData = Record<Level, QuizQ[]>;
 interface QuizStats { attempts?: number; learners?: number; avg_pct?: number; top_pct?: number; your_best_pct?: number }
+// One installed quiz. `instanceKey` is book_club_addons.instance_key — the blog_posts.id the quiz
+// was generated from, or null for a club's single legacy quiz.
+interface QuizInstance { instanceKey: string | null; levels: QuizData; sourceSlug: string | null; label: string }
 
 const LEVELS: Array<{ key: Level; label: string; blurb: string }> = [
   { key: 'beginner', label: 'Beginner', blurb: 'The story and the big ideas.' },
@@ -29,7 +35,7 @@ const LEVELS: Array<{ key: Level; label: string; blurb: string }> = [
 // Built-in Cryptography quiz (companion to "Keeping a Secret on Someone Else's Machine").
 const CRYPTO_QUIZ: QuizData = {
   beginner: [
-    { q: 'A thief steals the whole storehouse of sealed books and stored keys. What do they get?', options: ['The library, ready to read', 'A pile of locked boxes and locked-up keys, and nothing they can open', 'Only the public books', 'The master key'], answer: 1, explain: 'Every book is sealed with its own key, and each key is stored only after being locked inside a master key kept elsewhere.' },
+    { q: 'A thief steals the whole storehouse of sealed books and stored keys. What do they get?', options: ['The bookshelf, ready to read', 'A pile of locked boxes and locked-up keys, and nothing they can open', 'Only the public books', 'The master key'], answer: 1, explain: 'Every book is sealed with its own key, and each key is stored only after being locked inside a master key kept elsewhere.' },
     { q: 'What is "envelope encryption" in plain words?', options: ['Encrypt everything with one shared key', 'Give each secret its own key, then lock that key inside one master key', 'Hide the key inside the file', 'Mail the key separately'], answer: 1, explain: 'Each book gets its own data key; that key is stored only after being sealed inside a master key.' },
     { q: 'Who is Hafiz Al-Kindi in the story?', options: ['The reader', 'A small clerk the browser runs that caches and seals pages', 'The author of the book', 'A server in the cloud'], answer: 1, explain: 'He is the service worker: he memorizes (caches) each page and guards (seals) it.' },
     { q: 'Why does the word "hafiz" fit that clerk?', options: ['It means fast', 'It means one who both memorizes and guards', 'It means a lock', 'It means a scholar only'], answer: 1, explain: 'A hafiz memorizes and guards, exactly the clerk’s double duty: cache the page and keep it sealed.' },
@@ -69,40 +75,83 @@ const CRYPTO_QUIZ: QuizData = {
 export const ClubQuiz: React.FC<{ clubId: string }> = ({ clubId }) => {
   const enabled = useClubAddonEnabled(clubId, 'club-quiz');
 
-  // Config override: book_club_addons.config.levels, if a curator has set custom questions.
+  // A club may hold SEVERAL quizzes — one per blog post — distinguished by
+  // book_club_addons.instance_key (migration 20260823000007). This used to be a .maybeSingle(),
+  // which errors rather than picking one as soon as a second row exists; the error was swallowed as
+  // "no config" and the club silently fell back to the built-in Cryptography set.
   const cfg = useQuery({
-    queryKey: ['clubQuizConfig', clubId],
+    queryKey: ['clubQuizConfigs', clubId],
     enabled: !!clubId && enabled,
     staleTime: 60_000,
-    queryFn: async (): Promise<{ levels: QuizData; sourceSlug: string | null } | null> => {
+    queryFn: async (): Promise<QuizInstance[]> => {
       const { data } = await supabase
         .from('book_club_addons')
-        .select('config, addon:addon_registry!inner(slug)')
+        .select('instance_key, config, installed_at, addon:addon_registry!inner(slug)')
         .eq('book_club_id', clubId)
         .eq('addon.slug', 'club-quiz')
-        .maybeSingle();
-      const cfgRow = (data as { config?: { levels?: QuizData; source_post?: string } } | null)?.config;
-      const levels = cfgRow?.levels;
-      const ok = levels && LEVELS.every((l) => Array.isArray(levels[l.key]) && levels[l.key].length > 0);
-      if (!ok) return null;
+        .eq('is_enabled', true)
+        .order('installed_at', { ascending: false });
+
+      const rows = (data ?? []) as Array<{
+        instance_key: string | null;
+        installed_at: string | null;
+        config?: { levels?: QuizData; source_post?: string };
+      }>;
+
+      const usable = rows.filter((r) => {
+        const lv = r.config?.levels;
+        return !!lv && LEVELS.every((l) => Array.isArray(lv[l.key]) && lv[l.key].length > 0);
+      });
+      if (usable.length === 0) return [];
 
       // config.source_post is a blog_posts.id, but /blog/:slug resolves by SLUG only — linking the
-      // raw id would 404. Resolve it here; a missing/unpublished post just yields no link.
-      let sourceSlug: string | null = null;
-      if (cfgRow?.source_post) {
-        const { data: post } = await supabase
+      // raw id would 404. Resolve them in ONE query rather than per row, and use the post's title
+      // as the quiz's label so the picker reads like a list of essays rather than a list of uuids.
+      const ids = usable.map((r) => r.config?.source_post).filter(Boolean) as string[];
+      const bySource = new Map<string, { slug: string; title: string }>();
+      if (ids.length) {
+        const { data: posts } = await supabase
           .from('blog_posts')
-          .select('slug')
-          .eq('id', cfgRow.source_post)
-          .maybeSingle();
-        sourceSlug = (post as { slug?: string } | null)?.slug ?? null;
+          .select('id, slug, title')
+          .in('id', ids);
+        for (const p of (posts ?? []) as Array<{ id: string; slug: string; title: string }>) {
+          bySource.set(p.id, { slug: p.slug, title: p.title });
+        }
       }
-      return { levels: levels as QuizData, sourceSlug };
+
+      return usable.map((r) => {
+        const src = r.config?.source_post ? bySource.get(r.config.source_post) : undefined;
+        return {
+          instanceKey: r.instance_key,
+          levels: r.config!.levels as QuizData,
+          sourceSlug: src?.slug ?? null,
+          // An unpublished or deleted source post still yields a usable quiz; it just loses its
+          // label and its link rather than disappearing from the list.
+          label: src?.title ?? 'Club quiz',
+        };
+      });
     },
   });
 
-  const quiz = cfg.data?.levels ?? CRYPTO_QUIZ;
-  const sourceSlug = cfg.data?.sourceSlug ?? null;
+  const instances = cfg.data ?? [];
+  // Deep link: /book-clubs/:slug?section=quiz&quiz=<post-slug>. Falls back to the newest install.
+  const requested = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('quiz')
+    : null;
+  const [chosenKey, setChosenKey] = useState<string | null>(null);
+  const active = useMemo(() => {
+    if (instances.length === 0) return null;
+    if (chosenKey !== null) return instances.find((i) => i.instanceKey === chosenKey) ?? instances[0];
+    if (requested) {
+      const m = instances.find((i) => i.sourceSlug === requested || i.instanceKey === requested);
+      if (m) return m;
+    }
+    return instances[0];
+  }, [instances, chosenKey, requested]);
+
+  const quiz = active?.levels ?? CRYPTO_QUIZ;
+  const sourceSlug = active?.sourceSlug ?? null;
+  const instanceKey = active?.instanceKey ?? null;
 
   // Both are read off whatever quiz actually loaded, so the copy can never drift from the data.
   // LEVELS[0] is the shortest level; every level is generated with the same count, and a mismatch
@@ -132,20 +181,23 @@ export const ClubQuiz: React.FC<{ clubId: string }> = ({ clubId }) => {
       try {
         if (user) {
           const { data } = await rpcUntyped<QuizStats>('record_quiz_attempt',
-            { p_club_id: clubId, p_level: level, p_score: score, p_total: total });
+            { p_club_id: clubId, p_level: level, p_score: score, p_total: total, p_instance_key: instanceKey });
           if (data && (data as { ok?: boolean }).ok !== false) setStats(data);
         } else {
-          const { data } = await rpcUntyped<Partial<Record<Level, QuizStats>>>('club_quiz_stats', { p_club_id: clubId });
+          const { data } = await rpcUntyped<Partial<Record<Level, QuizStats>>>('club_quiz_stats',
+            { p_club_id: clubId, p_instance_key: instanceKey });
           if (data) setStats(data[level] ?? null);
         }
       } catch { /* stats are best-effort */ }
     })();
-  }, [done, level, saved, user, clubId, score, quiz]);
+  }, [done, level, saved, user, clubId, score, quiz, instanceKey]);
 
   if (!enabled) return null;
 
   const reset = () => { setLevel(null); setIdx(0); setPicked(null); setScore(0); setDone(false); setStats(null); setSaved(false); };
   const start = (lv: Level) => { setLevel(lv); setIdx(0); setPicked(null); setScore(0); setDone(false); setStats(null); setSaved(false); };
+  // Switching quiz mid-run would score answers from one essay against another's questions.
+  const pick = (key: string | null) => { setChosenKey(key); reset(); };
 
   // ── Level chooser ──
   if (!level) {
@@ -173,6 +225,31 @@ export const ClubQuiz: React.FC<{ clubId: string }> = ({ clubId }) => {
             </>
           ) : null}
         </p>
+        {instances.length > 1 ? (
+          <div className="mb-5">
+            <div className="text-sm font-semibold text-foreground mb-2">Choose a quiz</div>
+            <div className="flex flex-wrap gap-2">
+              {instances.map((inst) => {
+                const on = inst.instanceKey === (active?.instanceKey ?? null);
+                return (
+                  <button
+                    key={inst.instanceKey ?? '__legacy__'}
+                    type="button"
+                    onClick={() => pick(inst.instanceKey)}
+                    aria-pressed={on}
+                    className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+                      on
+                        ? 'border-primary bg-primary/10 text-foreground font-semibold'
+                        : 'border-border text-muted-foreground hover:border-primary'
+                    }`}
+                  >
+                    {inst.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
         <div className="grid gap-3 sm:grid-cols-3">
           {LEVELS.map((l) => (
             <button key={l.key} type="button" onClick={() => start(l.key)}

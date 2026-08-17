@@ -73,7 +73,7 @@ export function DatasetBody({ row, payload }: BodyProps) {
       {relatedPapers.length ? (
         <div>
           <SectionHeading>
-            {t('dailyCard.dataset.papers', { defaultValue: 'Papers in our library' })}
+            {t('dailyCard.dataset.papers', { defaultValue: 'Papers on the platform' })}
             <span className="ml-2 rounded-full bg-muted px-2 text-[11px] font-bold text-muted-foreground">{relatedPapers.length}</span>
           </SectionHeading>
           <div className="space-y-1.5">
