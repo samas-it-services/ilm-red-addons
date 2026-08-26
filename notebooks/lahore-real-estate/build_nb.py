@@ -12,22 +12,27 @@ nb.metadata.kernelspec = {"name": "python3", "display_name": "Python 3", "langua
 md = lambda s: nb.cells.append(nbf.v4.new_markdown_cell(s))
 code = lambda s: nb.cells.append(nbf.v4.new_code_cell(s))
 
-md("""# Three cities, one method — Lamudi's Pakistan footprint
+md("""# Three cities, two witnesses — counts from Lamudi, prices from Zameen
 
 **Companion notebook for [_Why invest in Lahore real-estate_](https://ilm.red/blog/why-invest-in-lahore-real-estate) on ilm.red.**
 
 The article argues that Pakistani property data is opaque, so an investor must reason from a
-city's *structure* rather than from clean price series. This notebook does exactly that with the
-one dataset anyone can verify in a browser: the live listing counts that **Lamudi.pk** — a
-national property portal headquartered, fittingly, in **Gulberg, Lahore** — publishes on its own
-homepage for Islamabad, Lahore and Karachi.
+city's *structure* rather than from clean price series. This notebook does that with **two real,
+independently checkable datasets** — no invented numbers anywhere:
+
+1. the live listing counts that **Lamudi.pk** — a national property portal headquartered,
+   fittingly, in **Gulberg, Lahore** — publishes on its own homepage for Islamabad, Lahore and
+   Karachi;
+2. the **Zameen.com house-price index**: 187 monthly observations per city (January 2011 to
+   July 2026) of the average asking price of houses, read from Zameen's own public index pages
+   and shipped beside this notebook as `zameen_house_index.csv`.
 
 Three honesty rules, inherited from the article:
 
 1. **Counts are not prices.** A listing count measures supply and portal adoption, not value.
 2. **Asking is not selling.** Nothing on any Pakistani portal is a closed transaction.
-3. **One portal is one witness.** Lamudi is a real but partial view; cross-check against others
-   (Zameen, Graana) before believing any level. The *shape* is what we trust, not the level.
+3. **One portal is one witness.** Two portals are two witnesses — where they disagree, the
+   disagreement is itself the finding. The *shape* is what we trust, not the level.
 """)
 
 md("""## 1 · The footprint snapshot (recorded 2026-08-25)
@@ -152,58 +157,120 @@ else:
 hist.to_csv(SERIES, index=False)
 print(f"{SERIES}: {hist['date'].nunique()} dated observation(s) for {hist['city'].nunique()} cities")""")
 
-md("""### The forecasting method, demonstrated on labelled stand-in data
+md("""## 5 · A real price series — the Zameen house-price index, 2011 to 2026
 
-Until the CSV has real depth, the method runs on a **clearly synthetic** series so the mechanics
-are visible. **Every number below this line is invented for demonstration** — the trend levels
-are made up; only the *method* (least-squares trend + a residual band, per city) transfers. The
-moment `lamudi_series.csv` holds six or more real dates, the same cell fits those instead and
-the caveat retires itself.
+`zameen_house_index.csv` beside this notebook holds **187 monthly observations per city** of the
+average asking price of houses, from Zameen.com's public price index. Provenance, exactly:
+
+- Read on **2026-08-26** from the server-rendered payload (`index_values`) of these three public
+  pages — the same numbers the on-page "Price Change Graph" draws:
+  [Lahore](https://www.zameen.com/index/buy/houses/lahore-1/) ·
+  [Karachi](https://www.zameen.com/index/buy/houses/karachi-2/) ·
+  [Islamabad](https://www.zameen.com/index/buy/houses/islamabad-3/)
+- Values are **average asking price in nominal PKR** for houses (all sizes), city-wide.
+- Spot-check: the Lahore page's headline "PKR 5.09 Crore" is this CSV's 2026-07 row
+  (50,866,816 PKR). Open the page and compare — that is the whole verification.
+
+Nominal PKR matters: the rupee lost roughly two-thirds of its dollar value between 2021 and
+2024, so a flat nominal line is a steep real-terms decline. The index is also asking prices on
+one portal — rule 2 and rule 3 above apply in full.
 """)
 
-code("""import numpy as np
-rng = np.random.default_rng(7)
+code("""from pathlib import Path
+import numpy as np
 
-real = hist.groupby("city").size().min() if len(hist) else 0
-if hist["date"].nunique() >= 6:
-    fit = hist.pivot_table(index="date", columns="city", values="houses")
-    label = "REAL series from lamudi_series.csv"
-else:
-    weeks = pd.date_range("2026-01-05", periods=30, freq="W")
-    fit = pd.DataFrame({   # SYNTHETIC: levels and slopes are invented for the demo
-        "Lahore":    21000 + 45 * np.arange(30) + rng.normal(0, 220, 30),
-        "Karachi":   11500 + 12 * np.arange(30) + rng.normal(0, 180, 30),
-        "Islamabad": 9300 + 28 * np.arange(30) + rng.normal(0, 150, 30),
-    }, index=weeks)
-    label = "SYNTHETIC demo series (invented numbers — see the caveat above)"
+ZAMEEN_CSV = Path("zameen_house_index.csv")
+zameen = pd.read_csv(ZAMEEN_CSV, parse_dates=["month"]).set_index("month").sort_index()
+zameen.columns = ["Lahore", "Karachi", "Islamabad"]
+print(f"{len(zameen)} months, {zameen.index[0]:%Y-%m} to {zameen.index[-1]:%Y-%m} — source: zameen.com index pages, read 2026-08-26")
+zameen.tail(3).round(0).astype(int)""")
 
-H = 12  # forecast horizon, in observations
-fig, ax = plt.subplots(figsize=(9, 4.2))
-x = np.arange(len(fit))
-xf = np.arange(len(fit) + H)
+code("""fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4.2))
 for city in cities:
-    y = fit[city].values
+    ax1.plot(zameen.index, zameen[city] / 1e7, lw=1.3, label=city)
+    ax2.plot(zameen.index, 100 * zameen[city] / zameen[city].iloc[0], lw=1.3, label=city)
+ax1.set_title("Average house asking price (PKR crore)", fontsize=10)
+ax1.set_ylabel("PKR crore (1 crore = 10M)")
+ax2.set_title("Same series, indexed to Jan 2011 = 100", fontsize=10)
+for ax in (ax1, ax2):
+    ax.legend(fontsize=8); ax.grid(alpha=0.3)
+fig.suptitle("Zameen house-price index — three cities, 2011 to 2026 (nominal PKR, asking prices)", y=1.02)
+plt.tight_layout(); plt.show()""")
+
+md("""What the real series says — every figure below is computed in the next cell from the CSV,
+so a re-run re-derives it rather than trusting this prose:
+
+- **The long march is similar, the recent path is not.** All three cities multiplied roughly
+  5x in nominal PKR since 2011 — and then diverged hard after 2024.
+- **Karachi houses are the outlier of the last two years**, up over 40% while the other two
+  drifted sideways or down in nominal terms.
+- **Islamabad is off its early-2024 peak** — the sharp 2023 run-up partially unwound, which is
+  what a thin, speculative market looks like on the way down. Read that against its
+  plots-per-house ratio in section 3.
+- **Lahore is the quiet one**: smallest recent swings in either direction. Flat nominal during
+  high inflation is a real-terms decline — the article's case is about the street-level economy,
+  and this index neither proves nor breaks it. That honesty survives contact with real data.
+""")
+
+code("""def pct(a, b):
+    return 100 * (b / a - 1)
+
+last = zameen.index[-1]
+rows = []
+for city in cities:
+    s = zameen[city]
+    peak_month = s.idxmax()
+    rows.append({
+        "city": city,
+        "latest (PKR crore)": round(s.iloc[-1] / 1e7, 2),
+        "since 2011 (x)": round(s.iloc[-1] / s.iloc[0], 2),
+        "12-month %": round(pct(s.loc[last - pd.DateOffset(months=12)], s.iloc[-1]), 1),
+        "24-month %": round(pct(s.loc[last - pd.DateOffset(months=24)], s.iloc[-1]), 1),
+        "vs own peak %": round(pct(s.max(), s.iloc[-1]), 1),
+        "peak month": f"{peak_month:%Y-%m}",
+    })
+takeaways = pd.DataFrame(rows).set_index("city")
+takeaways""")
+
+md("""### A naive extrapolation on the real series — method, not advice
+
+Least-squares trend on the **last 24 months** (regimes break: fitting one line through 2011-2026
+would average a currency crisis into a forecast), extrapolated 12 months with a 95% residual
+band. This is the *method* section: the band is honest about noise but silent about policy,
+rates and the rupee — which is why the article argues from structure instead.
+""")
+
+code("""FIT_M = 24  # fit window, months
+H = 12      # horizon, months
+fig, ax = plt.subplots(figsize=(9, 4.2))
+for city in cities:
+    y = zameen[city].iloc[-FIT_M:].values / 1e7
+    x = np.arange(FIT_M)
     a, b = np.polyfit(x, y, 1)
     resid = y - (a * x + b)
     band = 1.96 * resid.std()
+    xf = np.arange(FIT_M + H)
     yf = a * xf + b
-    ax.plot(x, y, lw=1, label=f"{city} observed")
-    ax.plot(xf[len(fit)-1:], yf[len(fit)-1:], "--", lw=1.5, label=f"{city} trend")
-    ax.fill_between(xf[len(fit)-1:], yf[len(fit)-1:] - band, yf[len(fit)-1:] + band, alpha=0.12)
-ax.set_title(f"House-listing trend + naive 12-step extrapolation\\n{label}", fontsize=10)
-ax.set_ylabel("houses listed"); ax.set_xlabel("observation #")
-ax.legend(fontsize=8, ncol=3); ax.grid(alpha=0.3)
+    dates = pd.date_range(zameen.index[-FIT_M], periods=FIT_M + H, freq="MS")
+    ax.plot(dates[:FIT_M], y, lw=1.2, label=f"{city} observed")
+    ax.plot(dates[FIT_M-1:], yf[FIT_M-1:], "--", lw=1.4)
+    ax.fill_between(dates[FIT_M-1:], yf[FIT_M-1:] - band, yf[FIT_M-1:] + band, alpha=0.12)
+ax.set_title(f"24-month trend + naive 12-month extrapolation, 95% residual band\\n"
+             f"REAL data: Zameen house index through {zameen.index[-1]:%b %Y} (nominal PKR)", fontsize=10)
+ax.set_ylabel("PKR crore"); ax.legend(fontsize=8, ncol=3); ax.grid(alpha=0.3)
 plt.tight_layout(); plt.show()""")
 
-md("""## 5 · Limitations, stated the article's way
+md("""## 6 · Limitations, stated the article's way
 
 - **Listing counts confound supply with portal adoption.** A city where Lamudi markets harder
   shows more listings without one extra brick existing.
-- **A trend in counts is not a trend in prices**, and a trend in asking prices would still not
-  be one in sale prices. Pakistan has no functional MLS; treat every extrapolation here as a
-  sketch of *method*, never as advice.
-- **Cross-witness before believing a level.** Repeat section 2 against a second portal and keep
-  both series; where the witnesses disagree, the disagreement is itself the finding.
+- **The Zameen index is asking prices, nominal PKR, one portal, opaque methodology.** A trend
+  in asking prices is not one in sale prices; Pakistan has no functional MLS. Deflate by CPI or
+  the PKR/USD rate before believing any "growth" number, and treat every extrapolation here as
+  a sketch of *method*, never as advice.
+- **Cross-witness before believing a level.** This notebook now carries two witnesses (Lamudi
+  counts, Zameen prices); where they disagree — Karachi looks cheap on counts and hot on
+  prices — the disagreement is itself the finding.
 - The article's conclusion stands apart from any of this arithmetic: judge a street by its mix,
   its ownership, its movement and its small self-funded improvements — then let numbers argue
   with what your feet saw.
