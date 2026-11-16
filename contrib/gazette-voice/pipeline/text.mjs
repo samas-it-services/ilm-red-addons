@@ -47,11 +47,13 @@ export const latinDigits = (s) => s.replace(/[۰-۹]/g, (d) => String(d.charCode
 
 /**
  * Standalone numbers in a text (not parts of names like Qwen3-32B or int8). Urdu digits are read too.
+ * A number joined to -fold, -times, -percent or -point counts.
  * @param {string} s @returns {string[]}
  */
 export function numbersIn(s) {
   const t = latinDigits(plainText(s));
-  return [...t.matchAll(/(?<![\p{L}\p{N}_.-])(\d+(?:[.,]\d+)?)(?![\p{L}\d_]|[.,]\d|-[\p{L}\d])/gu)].map((m) => m[1].replace(',', '.'));
+  // "16-fold", "3-times" and "40-percent" count as numbers; "Qwen3-32B" and "int8" do not.
+  return [...t.matchAll(/(?<![\p{L}\p{N}_.-])(\d+(?:[.,]\d+)?)(?![\p{L}\d_]|[.,]\d|-(?!(?:fold|times|percent|point)\b)[\p{L}\d])/gu)].map((m) => m[1].replace(',', '.'));
 }
 
 /** Normalise Urdu letter forms (Arabic ya, kaf, heh to Urdu). @param {string} s */
@@ -81,3 +83,6 @@ export function sentences(body) {
 
 /** The em dash, built at run time so source files never contain it (house style check). */
 export const EM_DASH_RE = new RegExp(`${String.fromCharCode(0x2014)}|&${'mdash'};`);
+
+/** Every digit sequence, for comparing two texts (a fix must not change any). @param {string} s */
+export const allDigits = (s) => (latinDigits(s).match(/\d+(?:[.,]\d+)?/g) ?? []);

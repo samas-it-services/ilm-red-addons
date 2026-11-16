@@ -19,7 +19,7 @@ describe('API contract draft', () => {
   });
   it('every operation in the spec is in docs/API.md, and every path in the doc is in the spec', () => {
     const norm = (/** @type {string} */ p) => p.replace(/\{[^}]+\}/g, '{}');
-    const docPaths = new Set([...doc.matchAll(/`(?:GET|POST|PUT|PATCH|DELETE) (\/[^`?\s]+)/g)].map((m) => norm(m[1])).filter((p) => p !== '/clubs/{}/gazette'));
+    const docPaths = new Set([...doc.matchAll(/`(?:GET|POST|PUT|PATCH|DELETE) (\/[^`?\s]+)/g)].map((m) => norm(m[1])).filter((p) => !['/clubs/{}/gazette', '/clubs/{}/addons'].includes(p))); // existing app operations, not part of this spec
     const specPaths = new Set(ops.map((o) => norm(o.path)));
     for (const p of specPaths) expect(docPaths, `doc misses ${p}`).toContain(p);
     for (const p of docPaths) expect(specPaths, `spec misses ${p}`).toContain(p);

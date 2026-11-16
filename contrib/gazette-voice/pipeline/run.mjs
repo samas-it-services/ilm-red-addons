@@ -75,8 +75,9 @@ const OUT_PER_PAPER = { scout: 220, write: 450, rewrite: 450, skeptic: 400, edit
  * @param {Store} a.store
  * @param {import('./types.mjs').PipelineDeps} a.deps
  * @param {number} [a.spentUsd]  already spent this edition (another language's run)
+ * @param {Map<number, string[]>} [a.corrections]  accepted reader fixes per paper number, for a regeneration (data, see fixes.mjs)
  */
-export async function runEdition({ runId, club, lang, papers, config, prompts, store, deps, spentUsd = 0 }) {
+export async function runEdition({ runId, club, lang, papers, config, prompts, store, deps, spentUsd = 0, corrections }) {
   const budget = createBudget(config.budgetUsd, spentUsd);
   const vars = { masthead: club.masthead, club_name: club.name, finance_rule: club.finance ? '9. Report what the research found. Never tell the reader to buy, sell, hold or invest, never promise a return, and never forecast the price of a named asset.' : '', min_words: '', max_words: '', max_items: '6' };
   const limits = limitsFor(lang, config.length);
@@ -155,7 +156,7 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
   /** @type {Map<number, Story>} */
   const stories = new Map();
   for (const batch of chunks(papers)) {
-    const text = await call('write', config.writerModel, { system: sys(writeKey, writeKey).system, prompt: writeData(batch.map((/** @type {Paper} */ p) => ({ paper: p, sources: kept.get(p.n) ?? [] })), lang) }, batch.length, null);
+    const text = await call('write', config.writerModel, { system: sys(writeKey, writeKey).system, prompt: writeData(batch.map((/** @type {Paper} */ p) => ({ paper: p, sources: kept.get(p.n) ?? [] })), lang, { corrections }) }, batch.length, null);
     if (text === null) { for (const p of batch) plain(p, lastRefused ? 'over_budget' : 'writer_failed'); continue; }
     try { for (const [n, s] of parseStories(text, batch.map((/** @type {Paper} */ p) => p.n))) stories.set(n, s); } catch { /* handled below */ }
     for (const p of batch) if (!stories.has(p.n) && !records.has(p.n)) plain(p, 'writer_unreadable');
@@ -182,7 +183,7 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
   }
   const toRewrite = papers.filter((p) => failed.has(p.n));
   for (const batch of chunks(toRewrite)) {
-    const text = await call('rewrite', config.writerModel, { system: sys('rewrite', writeKey).system, prompt: writeData(batch.map((/** @type {Paper} */ p) => ({ paper: p, sources: kept.get(p.n) ?? [] })), lang, { failed, stories }) }, batch.length, null);
+    const text = await call('rewrite', config.writerModel, { system: sys('rewrite', writeKey).system, prompt: writeData(batch.map((/** @type {Paper} */ p) => ({ paper: p, sources: kept.get(p.n) ?? [] })), lang, { failed, stories, corrections }) }, batch.length, null);
     /** @type {Map<number, Story>} */
     let redo = new Map();
     try { if (text !== null) redo = parseStories(text, batch.map((/** @type {Paper} */ p) => p.n)); } catch { /* keep failing */ }

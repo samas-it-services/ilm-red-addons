@@ -58,7 +58,7 @@ export function buildSystem({ frame, stage, voice = null, learned = [], vars = {
   }
   const kept = capLearned(learned);
   if (kept.length) {
-    layers.push({ kind: 'learned', version: `${kept.length} rules`, text: `LEARNED FROM READER FIXES (accepted by the club's managers; the house rules above still win)\n${kept.map((r) => `- ${r.text}`).join('\n')}` });
+    layers.push({ kind: 'learned', version: `${kept.length} rule${kept.length === 1 ? '' : 's'}`, text: `LEARNED FROM READER FIXES (accepted by the club's managers; the house rules above still win)\n${kept.map((r) => `- ${r.text}`).join('\n')}` });
   }
   return { system: layers.map((l) => l.text).join('\n\n'), layers };
 }

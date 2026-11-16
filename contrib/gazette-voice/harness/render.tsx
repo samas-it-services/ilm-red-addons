@@ -7,7 +7,7 @@ import path from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { TestSdkProvider, testSdk } from '../../_sdk/testing';
 import { NewsroomView, type NewsroomStoryData } from '../ui';
-import { screens as managerScreens } from './screens-manager';
+import { page } from './page';
 import { runEdition } from '../pipeline/run.mjs';
 import { toNewsroomData } from '../pipeline/present.mjs';
 import { fakeDeps } from '../../_sdk/fakes.mjs';
@@ -27,9 +27,6 @@ async function stories(lang: 'en' | 'ur'): Promise<NewsroomStoryData[]> {
   return records.map((r, i) => toNewsroomData(r, { storyId: `s${i}`, paperPath: ps[i].path, masthead: lang === 'ur' ? 'اے آئی گزٹ' : club.masthead }) as NewsroomStoryData);
 }
 
-export function page(title: string, body: string, opts: { dark?: boolean; width: number; rtl?: boolean }) {
-  return `<!DOCTYPE html><html lang="${opts.rtl ? 'ur' : 'en'}" class="${opts.dark ? 'dark' : ''}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title><link rel="stylesheet" href="harness.css"></head><body><main style="max-width:${opts.width}px;margin:0 auto;padding:16px">${body}</main></body></html>`;
-}
 
 const masthead = (name: string, meta: string, gear = false) => `<header class="flex items-end gap-4 border-b-4 border-double border-foreground px-4 pb-2 pt-4"><h2 class="flex-1 text-3xl font-semibold">${name}</h2><span class="text-sm text-muted-foreground">${meta}</span></header><nav class="flex border-b border-border px-4 text-sm"><span class="border-b-2 border-primary px-3 py-2 font-medium">Newsroom</span><span class="px-3 py-2 text-muted-foreground">Easy</span><span class="px-3 py-2 text-muted-foreground">Expert</span></nav>`;
 
@@ -50,7 +47,6 @@ async function main() {
     ['newsroom-no-expert', masthead('The AI Gazette', 'Expert terms hidden') + view([en[0]], noExpert), { width: 1080 }],
     ['newsroom-member-view', masthead('The AI Gazette', 'A member: no gear') + view([en[0]], {}, false), { width: 1080 }],
     ['newsroom-urdu', `<div dir="rtl">${masthead('اے آئی گزٹ', 'ہفتہ ۴۶')}</div>` + view(ur, { lang: 'ur' }), { width: 1080, rtl: true }],
-    ...managerScreens(en),
   ];
   for (const [name, body, opts] of pages) fs.writeFileSync(path.join(OUT, `${name}.html`), page(name, body, opts));
   console.log(`harness: wrote ${pages.length} pages to ${OUT}`);

@@ -43,14 +43,18 @@ Refusals: `validation_failed` (`too_long`, `em_dash`, `bad_link`, `quote_not_fou
 | `POST /clubs/{club}/gazette/prompts/{stage}/{lang}/versions` | `{ voice, note }`. 20 to 6,000 characters. Becomes a new version, not yet default. |
 | `POST /clubs/{club}/gazette/prompts/{stage}/{lang}/default` | `{ version }`. Also how a rollback is done. |
 | `POST /clubs/{club}/gazette/prompts/{stage}/{lang}/try?estimate=` | `{ version, paper_ids (1 to 3), budget_usd }`, `Idempotency-Key`. Returns `{ run_id, estimate_usd }`. Trial stories are never published. |
-| `GET /clubs/{club}/gazette/fixes?state=&cursor=` | The queue: `fix_id`, story, kind, quote, replacement, reason, member name, `check` (what the pre-check found), state. |
+| `GET /clubs/{club}/gazette/fixes?state=&cursor=` | The queue (`state=open` is waiting plus today's automatic ones): `fix_id`, `story_id`, `headline`, kind, quote, replacement, reason, member name, `check` (`flagged`, `problems`, `supported`), state, `auto`. |
 | `POST /gazette/fixes/{fix_id}/action` | `{ action, reply?, rule?, budget_usd? }`. `action`: `apply`, `regenerate` (spends, priced with `?estimate=true`), `learn` (with `rule`, one sentence), `reject`, `undo`. |
 | `PATCH /clubs/{club}/gazette/learned/{rule_id}` | `{ text?, pinned?, removed? }`. |
 | `POST /gazette/stories/{story_id}/undo` | `{ revision }`: back to that revision (a new revision records the undo). |
 | `PUT /clubs/{club}/gazette/term-labels/{term_slug}` | `{ level }`: a manager's Gazette label for this club (never the shared term level). |
+| `PATCH /clubs/{club}/addons` (existing) | The Settings tab saves `{ slug: "gazette-voice", config }` through the app's existing add-on settings operation. Only the club owner and admins may; moderators get `not_club_admin`. |
 
 Refusals for managers: `not_club_manager`, `over_budget`, `daily_regeneration_limit`, `validation_failed`, `not_found`.
 
 ## Connector tool
+
+Full definition: [`CONNECTOR.md`](CONNECTOR.md).
+
 
 `gazette_suggest_fix` (scope `library:read` plus signed in): `{ club, paper (number, title or story_id), kind, quote?, replacement, reason? }`. Same rules and replies as the website. Returns a one-line result for the assistant to read back: applied, waiting for the club's managers, or why not.

@@ -16,6 +16,7 @@ export function fakeApi(routes: ApiRoutes, log: Array<{ method: string; path: st
     get: (path) => hit('GET', path),
     post: (path, body) => hit('POST', path, body),
     put: (path, body) => hit('PUT', path, body),
+    patch: (path, body) => hit('PATCH', path, body),
   };
 }
 

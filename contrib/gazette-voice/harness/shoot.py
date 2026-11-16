@@ -7,7 +7,7 @@ chrome = sys.argv[1] if len(sys.argv) > 1 else '/usr/bin/google-chrome'
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path=chrome, args=['--no-sandbox'])
     for f in sorted(out.glob('*.html')):
-        w = 390 if 'phone' in f.name else 1180
+        w = 390 if 'phone' in f.name else 700 if 'fix-form' in f.name else 1180
         pg = b.new_page(viewport={'width': w, 'height': 900})
         pg.goto(f.as_uri()); pg.wait_for_timeout(300)
         sw = pg.evaluate('document.documentElement.scrollWidth')

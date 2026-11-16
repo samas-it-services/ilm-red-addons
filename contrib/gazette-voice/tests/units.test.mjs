@@ -68,7 +68,7 @@ describe('text helpers', () => {
     expect(s.join('')).toBe(b);
   });
   it('reads standalone numbers, not names', () => {
-    expect(numbersIn('In 2024, Qwen3-32B and int8 ran 16-fold at 0.55 on ۲۰۲۴')).toEqual(['2024', '0.55', '2024']);
+    expect(numbersIn('In 2024, Qwen3-32B and int8 ran 16-fold at 0.55 on ۲۰۲۴')).toEqual(['2024', '16', '0.55', '2024']);
   });
   it('counts words without URLs', () => {
     expect(wordCount('a [b c](https://x.org/y) d')).toBe(4);
@@ -110,7 +110,7 @@ describe('terms', () => {
 describe('prompt layers', () => {
   it('orders house, stage, voice, learned; fills placeholders; drops header comments', () => {
     const { system, layers } = buildSystem({ frame: '<!-- gv-frame-1: x -->\nRules for {{masthead}}.', stage: '<!-- s-1: y -->\nTask.', voice: { text: 'Be brief.', version: 'v3' }, learned: [{ id: 'a', text: 'Rule A.' }], vars: { masthead: 'The AI Gazette' } });
-    expect(layers.map((l) => [l.kind, l.version])).toEqual([['house', 'gv-frame-1'], ['stage', 's-1'], ['voice', 'v3'], ['learned', '1 rules']]);
+    expect(layers.map((l) => [l.kind, l.version])).toEqual([['house', 'gv-frame-1'], ['stage', 's-1'], ['voice', 'v3'], ['learned', '1 rule']]);
     expect(system.startsWith('Rules for The AI Gazette.')).toBe(true);
     expect(system).not.toMatch(/<!--/);
   });

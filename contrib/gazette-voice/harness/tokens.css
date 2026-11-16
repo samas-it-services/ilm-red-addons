@@ -2,7 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root { --background: 150 10% 97%; --foreground: 165 15% 12%; --muted: 160 10% 92%; --muted-foreground: 165 6% 38%; --border: 160 8% 84%; --primary: 177 78% 24%; --primary-foreground: 0 0% 100%; --accent: 170 25% 88%; --popover: 0 0% 100%; --popover-foreground: 165 15% 12%; --ring: 177 78% 30%; }
-.dark { --background: 160 12% 8%; --foreground: 160 15% 90%; --muted: 160 10% 15%; --muted-foreground: 160 6% 62%; --border: 160 9% 20%; --primary: 175 45% 55%; --primary-foreground: 160 12% 8%; --accent: 170 20% 20%; --popover: 160 12% 11%; --popover-foreground: 160 15% 90%; --ring: 175 45% 55%; }
+:root { --background: 150 10% 97%; --foreground: 165 15% 12%; --muted: 160 10% 92%; --muted-foreground: 165 6% 38%; --border: 160 8% 84%; --primary: 177 78% 24%; --primary-foreground: 0 0% 100%; --accent: 170 25% 88%; --popover: 0 0% 100%; --popover-foreground: 165 15% 12%; --ring: 177 78% 30%; --destructive: 4 70% 45%; }
+.dark { --background: 160 12% 8%; --foreground: 160 15% 90%; --muted: 160 10% 15%; --muted-foreground: 160 6% 62%; --border: 160 9% 20%; --primary: 175 45% 55%; --primary-foreground: 160 12% 8%; --accent: 170 20% 20%; --popover: 160 12% 11%; --popover-foreground: 160 15% 90%; --ring: 175 45% 55%; --destructive: 4 80% 65%; }
 body { background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
 .font-nastaliq { font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Noto Naskh Arabic", serif; }

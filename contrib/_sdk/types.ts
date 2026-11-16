@@ -102,6 +102,7 @@ export interface Api {
   get<T>(path: string): Promise<T>;
   post<T>(path: string, body: unknown, opts?: { idempotencyKey?: string }): Promise<T>;
   put<T>(path: string, body: unknown): Promise<T>;
+  patch<T>(path: string, body: unknown): Promise<T>;
 }
 
 /** Translation function. Real source: useT(ns).t from src/i18n/I18nProvider. */
