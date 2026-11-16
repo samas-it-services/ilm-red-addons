@@ -1,0 +1,27 @@
+{
+  "name": "ilm-red-addons-contrib",
+  "private": true,
+  "type": "module",
+  "description": "Hand-written add-ons for ilm.red, reviewed here before they are imported into the app.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "check": "node scripts/check-contrib.mjs",
+    "verify": "npm run check && npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.2.17",
+    "@testing-library/dom": "10.4.0",
+    "@testing-library/react": "16.0.1",
+    "@types/node": "22.9.0",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "jsdom": "25.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "typescript": "5.6.3",
+    "vitest": "3.2.4",
+    "yaml": "2.6.1"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "slug": "gazette-voice",
+  "name": "Gazette Voice",
+  "version": "0.1.0",
+  "icon": "📰",
+  "entryPoint": "GazetteVoiceAddon",
+  "placement": "decoration",
+  "category": "engagement",
+  "permissions": ["read_books", "ai:spend"],
+  "is_builtin": false,
+  "is_official": true,
+  "author": "ILM Red Unbound",
+  "license": "Apache-2.0",
+  "description": "Adds a Newsroom view to a club's Gazette: each paper written up in a lively news-site voice that links what the press, Hacker News, Hugging Face and code repos said about it, with terms highlighted by level, member fixes and an AI ops console for the club's managers.",
+  "privacy_statement": "Newsroom stories are written by AI from the paper's abstract, ilm.red's own notes and public coverage (titles, short snippets, counts and links). Fixes you suggest are shown to the club's managers with your name and may be used, after a manager's choice, in the prompt that rewrites a story; the text is removed from logs if your account is erased. Your highlight setting is saved to your account.",
+  "config_schema": {
+    "type": "object",
+    "properties": {
+      "voice": { "enum": ["newsroom", "plain"], "default": "newsroom" },
+      "sources": { "type": "array", "items": { "enum": ["hn", "hf", "s2", "news", "github", "youtube"] }, "default": ["hn", "hf", "s2", "news", "github", "youtube"] },
+      "writer_model": { "type": "string", "default": "claude-sonnet-5" },
+      "edition_budget_usd": { "type": "number", "minimum": 0.05, "maximum": 1.0, "default": 0.5 },
+      "updates": { "type": "boolean", "default": true },
+      "length": { "enum": ["short", "standard"], "default": "standard" },
+      "daily_regenerations": { "type": "integer", "minimum": 0, "maximum": 100, "default": 20 }
+    }
+  },
+  "paths": {
+    "ui": "ui",
+    "pipeline": "pipeline",
+    "prompts": "prompts",
+    "sql": "sql/gazette-voice.sql",
+    "openapi": "openapi/gazette-voice.yaml"
+  },
+  "network_hosts": [
+    "hn.algolia.com",
+    "news.ycombinator.com",
+    "huggingface.co",
+    "api.semanticscholar.org",
+    "news.google.com",
+    "api.github.com",
+    "github.com",
+    "www.googleapis.com",
+    "export.arxiv.org",
+    "arxiv.org"
+  ],
+  "dependencies": [],
+  "source": {
+    "repo": "samas-it-services/ilm-red-addons",
+    "path": "contrib/gazette-voice",
+    "note": "Hand-written contrib add-on. Reviewed here, then imported into the ilm.red app."
+  }
+}
