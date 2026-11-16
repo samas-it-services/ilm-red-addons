@@ -8,7 +8,8 @@
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check": "node scripts/check-contrib.mjs",
-    "verify": "npm run check && npm run typecheck && npm run test"
+    "verify": "npm run check && npm run typecheck && npm run test",
+    "harness": "vitest run --config gazette-voice/harness/harness.vitest.mjs --root . && tailwindcss -c gazette-voice/harness/tailwind.config.cjs -i gazette-voice/harness/tokens.css -o gazette-voice/harness/out/harness.css --minify && (python3 gazette-voice/harness/shoot.py || echo 'harness: no Chrome, pages only')"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.2.17",
@@ -20,6 +21,7 @@
     "jsdom": "25.0.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "tailwindcss": "3.4.17",
     "typescript": "5.6.3",
     "vitest": "3.2.4",
     "yaml": "2.6.1"
