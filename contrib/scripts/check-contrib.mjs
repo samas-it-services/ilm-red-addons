@@ -44,7 +44,8 @@ export const PIPELINE_BANNED = [
   { name: 'dynamic import of a URL', re: /import\s*\(\s*['"]https?:/ },
 ];
 
-const EM_DASH = /—|&mdash;/;
+/** Built at run time so this file does not contain the character it looks for. */
+const EM_DASH = new RegExp(`${String.fromCharCode(0x2014)}|&${'mdash'};`);
 const MANIFEST_FIELDS = ['slug', 'name', 'version', 'entryPoint', 'placement', 'category', 'license', 'description', 'privacy_statement', 'paths', 'network_hosts'];
 
 /** @param {string} dir @returns {string[]} */
@@ -71,7 +72,7 @@ export function checkTree(root) {
   const files = walk(root);
   for (const f of files) {
     const rel = path.relative(root, f);
-    if (rel.startsWith(`scripts${path.sep}check-contrib`) || rel.includes(`${path.sep}tests${path.sep}check-fixtures${path.sep}`)) continue;
+    if (rel.includes(`${path.sep}tests${path.sep}check-fixtures${path.sep}`)) continue;
     const text = fs.readFileSync(f, 'utf8');
     for (const s of SECRET_PATTERNS) if (s.re.test(text)) problems.push(`${rel}: looks like a secret (${s.name})`);
     if (EM_DASH.test(text) && !rel.endsWith('package-lock.json')) {

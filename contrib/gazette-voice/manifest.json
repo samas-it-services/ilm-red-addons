@@ -6,7 +6,10 @@
   "entryPoint": "GazetteVoiceAddon",
   "placement": "decoration",
   "category": "engagement",
-  "permissions": ["read_books", "ai:spend"],
+  "permissions": [
+    "read_books",
+    "ai:spend"
+  ],
   "is_builtin": false,
   "is_official": true,
   "author": "ILM Red Unbound",
@@ -16,13 +19,61 @@
   "config_schema": {
     "type": "object",
     "properties": {
-      "voice": { "enum": ["newsroom", "plain"], "default": "newsroom" },
-      "sources": { "type": "array", "items": { "enum": ["hn", "hf", "s2", "news", "github", "youtube"] }, "default": ["hn", "hf", "s2", "news", "github", "youtube"] },
-      "writer_model": { "type": "string", "default": "claude-sonnet-5" },
-      "edition_budget_usd": { "type": "number", "minimum": 0.05, "maximum": 1.0, "default": 0.5 },
-      "updates": { "type": "boolean", "default": true },
-      "length": { "enum": ["short", "standard"], "default": "standard" },
-      "daily_regenerations": { "type": "integer", "minimum": 0, "maximum": 100, "default": 20 }
+      "voice": {
+        "enum": [
+          "newsroom",
+          "plain"
+        ],
+        "default": "newsroom"
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "hn",
+            "hf",
+            "s2",
+            "news",
+            "github",
+            "youtube"
+          ]
+        },
+        "default": [
+          "hn",
+          "hf",
+          "s2",
+          "news",
+          "github",
+          "youtube"
+        ]
+      },
+      "writer_model": {
+        "type": "string",
+        "default": "claude-sonnet-5"
+      },
+      "edition_budget_usd": {
+        "type": "number",
+        "minimum": 0.05,
+        "maximum": 1.0,
+        "default": 0.5
+      },
+      "updates": {
+        "type": "boolean",
+        "default": true
+      },
+      "length": {
+        "enum": [
+          "short",
+          "standard"
+        ],
+        "default": "standard"
+      },
+      "daily_regenerations": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 100,
+        "default": 20
+      }
     }
   },
   "paths": {
@@ -42,12 +93,14 @@
     "github.com",
     "www.googleapis.com",
     "export.arxiv.org",
-    "arxiv.org"
+    "arxiv.org",
+    "www.youtube.com"
   ],
   "dependencies": [],
   "source": {
     "repo": "samas-it-services/ilm-red-addons",
     "path": "contrib/gazette-voice",
     "note": "Hand-written contrib add-on. Reviewed here, then imported into the ilm.red app."
-  }
+  },
+  "link_check": "Link safety sends one status request (HEAD or a small GET, no body kept) to each candidate link, which can be any https host; every other request goes only to network_hosts."
 }

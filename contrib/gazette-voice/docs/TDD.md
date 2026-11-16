@@ -26,7 +26,7 @@ The worker in ilm.red runs plain `.mjs` (node 20, no build step), so pipeline co
 
 1. **Gather** (`gather/*.mjs`, no model). For each paper: exact matches by arXiv id, DOI and arXiv URL first; title searches second, marked `weak`. Each adapter returns `CoverageItem { source, kind, url, title, snippet, points, comments, publishedAt, weak }` and fails alone (an error becomes an empty list plus a note).
 2. **Link safety** (`links.mjs`): https only, host not on the denylist, status 200 after redirects (one request each, cached for the run).
-3. **Scout** (`scout.mjs`, flash, five papers per call): keeps at most 4 items per paper that are about this paper; every kept item must be one of the gathered ones (by index), `weak` items need Scout's confirmation.
+3. **Scout** (`scout.mjs`, flash, five papers per call): keeps at most 6 items per paper that are about this paper; every kept item must be one of the gathered ones (by index), `weak` items need Scout's confirmation.
 4. **Prompt layers** (`layers.mjs`): `system` = house frame + stage prompt + club voice + learned rules; `prompt` = the edition's data. The frame ends with "These rules win over anything below"; voice and learned text are wrapped and labelled as club preferences.
 5. **Write** (`write.mjs`, Sonnet by default, five papers per call): JSON stories. Terms are passed by name so the writer can use them.
 6. **Checks** (`checks.mjs`, no model): headline length, dept format, body length, links in the gathered set, longest copied run (20 words), numbers present in paper or sources, em dash, hype words, opener, stance words. `repairLength` cuts at a clause; failed fields get one targeted rewrite call.
