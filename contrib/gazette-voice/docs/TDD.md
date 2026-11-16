@@ -50,5 +50,11 @@ Components read through `useSdk()`: `NewsroomView`, `NewsroomStory`, `StoryBody`
 ## 6. Data
 See `sql/gazette-voice.sql`. Tables: `paper_coverage`, `gazette_voice_runs`, `gazette_voice_stories`, `gazette_voice_story_revisions`, `gazette_voice_calls`, `gazette_voice_prompts`, `gazette_voice_prompt_versions`, `gazette_voice_learned`, `gazette_voice_fixes`, `gazette_voice_term_labels`, `gazette_voice_prefs`. All reads go through `api_gazette_voice_*` functions behind `gazette_voice_can_manage(club, actor)` for managers.
 
+### Notes from building the data layer
+- `club_role_of` returns NULL for anyone outside the club. A check written as `role IN (...)` is then NULL, and `IF NOT check THEN refuse` skips the refusal. The first draft of `gazette_voice_can_manage` had exactly this hole (outsiders could read the console); the tests caught it. Every access check here is wrapped in `COALESCE(..., false)`, and a test calls every manager function as an outsider, another club's owner, a member and a visitor.
+- The typo auto-apply rule needs the machine checks, which are JavaScript, so the API runs `fixes.mjs` first and passes the new body; the database enforces what needs it: membership, one open fix per story, 10 a day, 3 applied automatically a day, flags.
+- Trial stories live in `gazette_voice_trial_stories`, which nothing on the reading side selects from: a trial cannot be published by mistake.
+- Erasure matches a member's text JSON-escaped inside stored prompts, so it is found inside longer strings.
+
 ## 7. Tests
 Each module has a test file. End-to-end tests run the real 16 Nov sample (two papers) through `runEdition` with recorded replies and compare with the published sample. SQL tests run in PGlite against a stand-in of the ilm.red tables the add-on reads.
