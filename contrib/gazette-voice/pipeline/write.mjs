@@ -71,6 +71,9 @@ export function sourceTexts(p, sources) {
   const texts = [p.abstract, p.notes ?? '', p.title, ...sources.flatMap((k) => [k.item.title, k.item.snippet ?? '', k.adds])];
   // An arXiv number states its year and month (2405.07987 is May 2024), so a linked paper's year is a fact too.
   const arxivYears = [p.url, ...sources.flatMap((k) => [k.item.url, k.item.linksTo ?? ''])].map((u) => u.match(/arxiv\.org\/abs\/(\d{2})(\d{2})\./)).filter(Boolean).map((m) => `20${/** @type {RegExpMatchArray} */ (m)[1]}`);
-  const facts = [...texts, ...arxivYears, ...sources.map((k) => [k.item.points, k.item.comments, k.item.stars, k.item.count, k.item.publishedAt?.slice(0, 4)].filter((x) => x !== undefined && x !== null).join(' '))].join('\n');
+  // The arXiv numbers themselves are facts too: a story may name "arXiv 2611.12799" in a link's text (first live
+  // edition, 16 Nov 2026: every rewrite that did so was refused as an unsourced number).
+  const arxivIds = [p.arxivId ?? '', p.url, ...sources.flatMap((k) => [k.item.url, k.item.linksTo ?? ''])].map((u) => u.match(/(\d{4}\.\d{4,5})/)).filter(Boolean).map((m) => /** @type {RegExpMatchArray} */ (m)[1]);
+  const facts = [...texts, ...arxivYears, ...arxivIds, ...sources.map((k) => [k.item.points, k.item.comments, k.item.stars, k.item.count, k.item.publishedAt?.slice(0, 4)].filter((x) => x !== undefined && x !== null).join(' '))].join('\n');
   return { texts: texts.filter(Boolean), facts };
 }

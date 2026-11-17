@@ -169,3 +169,13 @@ describe('budget and call log', () => {
     expect(rec.reply.text).toBe('boom');
   });
 });
+
+describe('the paper\'s own arXiv number is a known fact', () => {
+  it('a link that names "arXiv 2611.12799" does not fail the number check (first live edition, 16 Nov 2026)', async () => {
+    const { sourceTexts } = await import('../pipeline/write.mjs');
+    const p = { ...papers[1], arxivId: '2611.12799', url: 'https://arxiv.org/abs/2611.12799' };
+    const { facts } = sourceTexts(p, []);
+    expect(numbersIn('See [arXiv 2611.12799](https://arxiv.org/abs/2611.12799).').every((n) => facts.includes(n))).toBe(true);
+  });
+});
+
