@@ -2,9 +2,42 @@ import type { ReactNode } from 'react';
 import { useStrings } from './useStrings';
 import { ALL_LEVELS, type TermPrefs } from './types';
 
-/** "Highlight terms" plus one button per level. Off means terms are plain text, not links. */
-export function TermSwitch({ prefs, onChange, end }: { prefs: TermPrefs; onChange: (p: TermPrefs) => void; end?: ReactNode }) {
+const SAMPLE: Record<string, string> = { easy: 'border-dotted border-muted-foreground', advanced: 'border-dashed border-muted-foreground', expert: 'border-solid border-foreground' };
+
+/**
+ * "Highlight terms" plus one button per level. Off means terms are plain text, not links. The "inline" variant
+ * sits in a page's toolbar (the broadsheet): each level is shown as the underline it uses in the story.
+ */
+export function TermSwitch({ prefs, onChange, end, variant = 'bar' }: { prefs: TermPrefs; onChange: (p: TermPrefs) => void; end?: ReactNode; variant?: 'bar' | 'inline' }) {
   const s = useStrings();
+  if (variant === 'inline') {
+    return (
+      <div role="group" aria-label={s('terms.group')} className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <span className="inline-flex items-center gap-3">
+          {ALL_LEVELS.map((l) => {
+            const on = prefs.levels.includes(l);
+            return (
+              <button
+                key={l}
+                type="button"
+                aria-pressed={on}
+                disabled={!prefs.highlight}
+                onClick={() => onChange({ ...prefs, levels: on ? prefs.levels.filter((x) => x !== l) : [...prefs.levels, l] })}
+                className={`min-h-11 bg-transparent px-0.5 disabled:opacity-50 ${on ? 'text-foreground' : 'text-muted-foreground line-through'}`}
+              >
+                <span className={`border-b-2 ${SAMPLE[l]}`}>{s(`level.${l}` as const)}</span>
+              </button>
+            );
+          })}
+        </span>
+        <label className="inline-flex min-h-11 cursor-pointer items-center gap-2">
+          <input type="checkbox" className="h-4 w-4 accent-foreground" checked={prefs.highlight} onChange={(e) => onChange({ ...prefs, highlight: e.target.checked })} />
+          {s('terms.switch')}
+        </label>
+        {end}
+      </div>
+    );
+  }
   return (
     <div role="group" aria-label={s('terms.group')} className="flex flex-wrap items-center gap-3 border-b border-border bg-muted px-4 py-2 text-sm">
       <label className="inline-flex cursor-pointer items-center gap-2 font-medium">

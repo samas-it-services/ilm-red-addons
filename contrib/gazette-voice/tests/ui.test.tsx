@@ -132,6 +132,13 @@ describe('Newsroom screens', () => {
     expect(document.querySelector('a[data-level]')?.textContent).toBe('لسانی ماڈلزآسان');
     expect(document.querySelector('a[data-level] sup')?.className).toBe('sr-only');
   });
+
+  it('never prints the level beside an English term either; the underline style carries it', async () => {
+    const { LEVEL_CLASS } = await import('../ui/StoryBody');
+    expect(LEVEL_CLASS.easy).toMatch(/border-dotted/);
+    expect(LEVEL_CLASS.advanced).toMatch(/border-dashed/);
+    expect(LEVEL_CLASS.expert).toMatch(/border-solid/);
+  });
 });
 
 describe('screen helpers', () => {

@@ -5,11 +5,14 @@ import type { NewsroomTerm, TermPrefs, Level } from './types';
 
 const LINK = /\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g;
 
-/** Underline style per level, so colour is never the only cue (solid, dashed, dotted). */
+/**
+ * Underline style per level, so colour is never the only cue: dotted Easy, dashed Advanced, solid Expert (the
+ * broadsheet design, 16 Nov 2026). The level is never printed beside the word; it is read out and shown on hover.
+ */
 export const LEVEL_CLASS: Record<Level, string> = {
-  easy: 'border-b-2 border-solid border-primary',
-  advanced: 'border-b-2 border-dashed border-primary',
-  expert: 'border-b-2 border-dotted border-primary',
+  easy: 'border-b-2 border-dotted border-muted-foreground',
+  advanced: 'border-b-2 border-dashed border-muted-foreground',
+  expert: 'border-b-2 border-solid border-foreground',
 };
 
 type Piece = { kind: 'text'; text: string } | { kind: 'link'; text: string; url: string } | { kind: 'term'; text: string; term: NewsroomTerm };
@@ -49,7 +52,7 @@ function Term({ term, clubSlug, on }: { term: NewsroomTerm; clubSlug: string; on
       <a
         href={href.term(clubSlug, term.slug)}
         data-level={term.level}
-        className={`rounded-sm bg-muted px-0.5 text-foreground no-underline hover:bg-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${ur ? 'pb-1' : ''} ${LEVEL_CLASS[term.level]}`}
+        className={`text-inherit no-underline hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${ur ? 'pb-1' : 'pb-px'} ${LEVEL_CLASS[term.level]}`}
         aria-describedby={open ? tipId : undefined}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -57,8 +60,8 @@ function Term({ term, clubSlug, on }: { term: NewsroomTerm; clubSlug: string; on
         onBlur={() => setOpen(false)}
       >
         {text}
-        {/* Urdu: the tag would crowd the Nastaliq letters, so the level is read out and shown in the card instead. */}
-        <sup className={ur ? 'sr-only' : 'ms-0.5 font-mono text-[0.6rem] font-semibold uppercase tracking-wide text-muted-foreground'}>{label}</sup>
+        {/* The level is read out and shown in the card, never printed beside the word (it crowded the line). */}
+        <sup className="sr-only">{label}</sup>
       </a>
       {open && (
         <span id={tipId} role="tooltip" className="absolute start-0 top-full z-20 mt-1 block w-72 rounded-md border border-border bg-popover p-2 text-start text-sm text-popover-foreground shadow-md">
@@ -73,12 +76,12 @@ function Term({ term, clubSlug, on }: { term: NewsroomTerm; clubSlug: string; on
 }
 
 /** A story body: inline links open in a new tab; terms are highlighted or plain text per the reader's settings. */
-export function StoryBody({ body, terms, clubSlug, prefs }: { body: string; terms: NewsroomTerm[]; clubSlug: string; prefs: TermPrefs }): ReactNode {
+export function StoryBody({ body, terms, clubSlug, prefs, className = 'max-w-prose leading-relaxed' }: { body: string; terms: NewsroomTerm[]; clubSlug: string; prefs: TermPrefs; className?: string }): ReactNode {
   return (
-    <p className="max-w-prose leading-relaxed">
+    <p className={className}>
       {pieces(body, terms).map((p, i) => {
         if (p.kind === 'text') return <Fragment key={i}>{p.text}</Fragment>;
-        if (p.kind === 'link') return <a key={i} href={p.url} target="_blank" rel="nofollow ugc noopener noreferrer" className="text-primary underline underline-offset-2">{p.text}</a>;
+        if (p.kind === 'link') return <a key={i} href={p.url} target="_blank" rel="nofollow ugc noopener noreferrer" className="text-inherit underline decoration-primary decoration-2 underline-offset-4 hover:text-primary">{p.text}</a>;
         return <Term key={i} term={p.term} clubSlug={clubSlug} on={prefs.highlight && prefs.levels.includes(p.term.level)} />;
       })}
     </p>
