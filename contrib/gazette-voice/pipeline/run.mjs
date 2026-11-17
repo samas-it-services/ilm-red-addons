@@ -19,6 +19,13 @@ import { labelTerms } from './levels.mjs';
 /** @typedef {import('./types.mjs').Paper} Paper @typedef {import('./types.mjs').KeptSource} KeptSource @typedef {import('./types.mjs').Story} Story @typedef {import('./types.mjs').Lang} Lang @typedef {import('./types.mjs').CoverageItem} CoverageItem @typedef {import('./types.mjs').Source} Source */
 
 export const BATCH = 5;
+/**
+ * Stories per writer call. Urdu takes about twice the output tokens of English for the same story (Sonnet's Urdu
+ * batch of five used 13,000 and 16,000 tokens on 16 Nov 2026, and the second was cut off), so Urdu is written three
+ * at a time.
+ * @type {Record<string, number>}
+ */
+export const WRITE_BATCH = { en: 5, ur: 3 };
 export const COVERAGE_TTL_MS = 24 * 3600 * 1000;
 /**
  * Output room per stage. A batch of five stories is about 7,000 tokens, close to 8,000; the Skeptic reasons at
@@ -28,7 +35,10 @@ export const COVERAGE_TTL_MS = 24 * 3600 * 1000;
  */
 export const MAX_TOKENS = { write: 16000, rewrite: 16000, skeptic: 32000 };
 /** Expected output tokens per paper, for estimates. */
-const OUT_PER_PAPER = { scout: 220, write: 450, rewrite: 450, skeptic: 400, editor: 160, arbiter: 60, level: 40 };
+// Expected output tokens per paper, reasoning included, from the first live editions (16 Nov 2026): English writes
+// used 550 to 1,400 per story; Urdu about twice that. The old figures (450) let an edition overshoot its cap.
+const OUT_PER_PAPER = { scout: 220, write: 1400, rewrite: 1400, skeptic: 1500, editor: 300, arbiter: 300, level: 40 };
+/** @type {Record<string, number>} */ const LANG_OUT = { en: 1, ur: 2 };
 
 /**
  * What the run needs from ilm.red's database. The import step implements it over the real tables.
@@ -112,7 +122,7 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
   async function call(stage, model, req, papersInCall, storyKey) {
     lastRefused = false;
     const rate = config.rates[model] ?? { in: 0.003, out: 0.015 };
-    const est = estimateUsd(req, rate, OUT_PER_PAPER[/** @type {keyof typeof OUT_PER_PAPER} */ (stage)] * papersInCall);
+    const est = estimateUsd(req, rate, OUT_PER_PAPER[/** @type {keyof typeof OUT_PER_PAPER} */ (stage)] * papersInCall * ((stage === 'write' || stage === 'rewrite') ? (LANG_OUT[lang] ?? 1) : 1));
     const full = { model, system: req.system, prompt: req.prompt, stage, maxTokens: MAX_TOKENS[stage] ?? 8000, reasoning: /** @type {'low'|'high'} */ (stage === 'skeptic' ? 'high' : 'low') };
     if (!budget.canAfford(est)) {
       lastRefused = true;
@@ -130,7 +140,9 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
     }
   }
   const sys = (/** @type {string} */ stageKey, /** @type {string} */ voiceKey) => buildSystem({ frame: prompts.frame, stage: prompts.stages[stageKey], voice: prompts.voices[voiceKey] ?? null, learned: voiceKey.startsWith('write') ? prompts.learned[lang] ?? [] : [], vars });
-  const chunks = (/** @type {any[]} */ xs) => Array.from({ length: Math.ceil(xs.length / BATCH) }, (_, i) => xs.slice(i * BATCH, i * BATCH + BATCH));
+  const chunksOf = (/** @type {number} */ n) => (/** @type {any[]} */ xs) => Array.from({ length: Math.ceil(xs.length / n) }, (_, i) => xs.slice(i * n, i * n + n));
+  const chunks = chunksOf(BATCH);
+  const writeChunks = chunksOf(WRITE_BATCH[lang] ?? BATCH);
 
   // 1 and 2. Gather (cached for a day across languages and runs) and check links.
   /** @type {Map<number, CoverageItem[]>} */
@@ -162,7 +174,7 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
   const writeKey = `write.${lang}`;
   /** @type {Map<number, Story>} */
   const stories = new Map();
-  for (const batch of chunks(papers)) {
+  for (const batch of writeChunks(papers)) {
     const text = await call('write', config.writerModel, { system: sys(writeKey, writeKey).system, prompt: writeData(batch.map((/** @type {Paper} */ p) => ({ paper: p, sources: kept.get(p.n) ?? [] })), lang, { corrections }) }, batch.length, null);
     if (text === null) { for (const p of batch) plain(p, lastRefused ? 'over_budget' : 'writer_failed'); continue; }
     try { for (const [n, s] of parseStories(text, batch.map((/** @type {Paper} */ p) => p.n))) stories.set(n, s); } catch { /* handled below */ }
@@ -189,7 +201,7 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
     if (!r.ok) failed.set(p.n, r.fails.map((f) => `${f.field}: ${f.code}${f.detail ? ` (${f.detail})` : ''}`));
   }
   const toRewrite = papers.filter((p) => failed.has(p.n));
-  for (const batch of chunks(toRewrite)) {
+  for (const batch of writeChunks(toRewrite)) {
     const text = await call('rewrite', config.writerModel, { system: sys('rewrite', writeKey).system, prompt: writeData(batch.map((/** @type {Paper} */ p) => ({ paper: p, sources: kept.get(p.n) ?? [] })), lang, { failed, stories, corrections }) }, batch.length, null);
     /** @type {Map<number, Story>} */
     let redo = new Map();
