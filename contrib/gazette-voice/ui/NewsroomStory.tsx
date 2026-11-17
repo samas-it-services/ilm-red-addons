@@ -19,7 +19,7 @@ export function NewsroomStory({ story, clubSlug, prefs, actions = {}, lead = fal
     return (
       <article className="border-b border-border py-5 last:border-b-0" dir={ur ? 'rtl' : 'ltr'} lang={story.lang}>
         <h3 className={`text-lg font-semibold ${font}`}>{story.easy?.headline ?? story.headline}</h3>
-        <div className="mt-2 rounded-md border border-dashed border-border bg-muted/30 p-3">
+        <div className="mt-2 rounded-md border border-dashed border-border bg-muted p-3">
           <p className="mb-1 text-xs text-muted-foreground"><span className="me-1 rounded bg-muted px-1.5 py-0.5 font-mono uppercase">{s('story.plain')}</span>{s('story.plainWhy')}</p>
           <p className={`max-w-prose ${font}`}>{story.easy?.text}</p>
         </div>
@@ -36,7 +36,7 @@ export function NewsroomStory({ story, clubSlug, prefs, actions = {}, lead = fal
         <StoryBody body={story.body} terms={story.terms} clubSlug={clubSlug} prefs={prefs} />
       </div>
       {story.update && (
-        <p className="my-3 max-w-prose rounded-e-md border-s-4 border-primary bg-muted/40 px-3 py-2 text-sm">
+        <p className="my-3 max-w-prose rounded-e-md border-s-4 border-primary bg-muted px-3 py-2 text-sm">
           <b className="text-primary">{s('story.update')}</b>{' '}
           {pieces(story.update, []).map((p, i) => (p.kind === 'link' ? <a key={i} href={p.url} target="_blank" rel="nofollow ugc noopener noreferrer" className="text-primary underline">{p.text}</a> : <span key={i}>{p.text}</span>))}
         </p>

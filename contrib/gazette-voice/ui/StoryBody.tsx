@@ -49,7 +49,7 @@ function Term({ term, clubSlug, on }: { term: NewsroomTerm; clubSlug: string; on
       <a
         href={href.term(clubSlug, term.slug)}
         data-level={term.level}
-        className={`rounded-sm bg-muted px-0.5 text-foreground no-underline hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${ur ? 'pb-1' : ''} ${LEVEL_CLASS[term.level]}`}
+        className={`rounded-sm bg-muted px-0.5 text-foreground no-underline hover:bg-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${ur ? 'pb-1' : ''} ${LEVEL_CLASS[term.level]}`}
         aria-describedby={open ? tipId : undefined}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}

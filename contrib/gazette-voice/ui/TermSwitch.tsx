@@ -6,7 +6,7 @@ import { ALL_LEVELS, type TermPrefs } from './types';
 export function TermSwitch({ prefs, onChange, end }: { prefs: TermPrefs; onChange: (p: TermPrefs) => void; end?: ReactNode }) {
   const s = useStrings();
   return (
-    <div role="group" aria-label={s('terms.group')} className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/40 px-4 py-2 text-sm">
+    <div role="group" aria-label={s('terms.group')} className="flex flex-wrap items-center gap-3 border-b border-border bg-muted px-4 py-2 text-sm">
       <label className="inline-flex cursor-pointer items-center gap-2 font-medium">
         <input
           type="checkbox"

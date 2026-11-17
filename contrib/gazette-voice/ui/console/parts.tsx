@@ -16,7 +16,7 @@ export function Tile({ k, v, s, meter }: { k: string; v: string; s?: string; met
 }
 
 const TONE: Record<string, string> = { ok: 'border-primary text-primary', done: 'border-primary text-primary', applied: 'border-primary text-primary', ready: 'border-primary text-primary',
-  waiting: 'border-foreground/40 text-foreground', priced: 'border-foreground/40 text-foreground', running: 'border-foreground/40 text-foreground', regenerating: 'border-foreground/40 text-foreground',
+  waiting: 'border-muted-foreground text-foreground', priced: 'border-muted-foreground text-foreground', running: 'border-muted-foreground text-foreground', regenerating: 'border-muted-foreground text-foreground',
   error: 'border-destructive text-destructive', failed: 'border-destructive text-destructive', refused: 'border-destructive text-destructive', rejected: 'border-muted-foreground text-muted-foreground', flagged: 'border-destructive text-destructive' };
 
 export function Pill({ children, tone }: { children: ReactNode; tone: string }) {
@@ -32,7 +32,7 @@ export function Table({ head, rows, label }: { head: string[]; rows: ReactNode[]
   return (
     <div className="overflow-x-auto rounded-lg border border-border">
       <table className="w-full text-sm tabular-nums" aria-label={label}>
-        <thead><tr>{head.map((h) => <th key={h} className="whitespace-nowrap bg-muted/40 px-3 py-2 text-start text-xs font-semibold text-muted-foreground">{h}</th>)}</tr></thead>
+        <thead><tr>{head.map((h) => <th key={h} className="whitespace-nowrap bg-muted px-3 py-2 text-start text-xs font-semibold text-muted-foreground">{h}</th>)}</tr></thead>
         <tbody>{rows.map((r, i) => <tr key={i} className="border-t border-border">{r.map((c, j) => <td key={j} className="whitespace-nowrap px-3 py-2">{c}</td>)}</tr>)}</tbody>
       </table>
     </div>

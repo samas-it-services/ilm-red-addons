@@ -12,8 +12,8 @@ export function DiscussionChips({ chips }: { chips: NewsroomChip[] }) {
         return (
           <li key={i} className="list-none">
             {c.url
-              ? <a href={c.url} target="_blank" rel="nofollow ugc noopener noreferrer" className="inline-flex min-h-8 items-center rounded-full border border-border bg-muted/40 px-3 text-xs tabular-nums text-foreground hover:border-primary">{inner}</a>
-              : <span className="inline-flex min-h-8 items-center rounded-full border border-border bg-muted/40 px-3 text-xs tabular-nums">{inner}</span>}
+              ? <a href={c.url} target="_blank" rel="nofollow ugc noopener noreferrer" className="inline-flex min-h-8 items-center rounded-full border border-border bg-muted px-3 text-xs tabular-nums text-foreground hover:border-primary">{inner}</a>
+              : <span className="inline-flex min-h-8 items-center rounded-full border border-border bg-muted px-3 text-xs tabular-nums">{inner}</span>}
           </li>
         );
       })}
