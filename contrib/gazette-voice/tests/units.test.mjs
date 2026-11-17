@@ -179,3 +179,44 @@ describe('the paper\'s own arXiv number is a known fact', () => {
   });
 });
 
+
+describe('the Week in Numbers', () => {
+  const story = { n: 1, paperId: 'p1', headline: 'H', body: 'Exposure in [25% of runs](https://a.b/c) gave 97.9% violations after 128 updates.',
+    claims: [{ text: '97.9% certified profitable violations after 128 updates', status: 'supported' }, { text: '25% of training episodes', status: 'unsupported' }] };
+  it('keeps a figure only when it is in the story and in a traced claim', async () => {
+    const { parseNumbers } = await import('../pipeline/numbers.mjs');
+    const out = parseNumbers(JSON.stringify({ numbers: [
+      { paper: 1, figure: '97.9%', label: 'of agents ended up cheating for profit' },
+      { paper: 1, figure: '25%', label: 'of runs had conflicts' },
+      { paper: 1, figure: '42', label: 'invented' },
+      { paper: 9, figure: '128', label: 'no such story' },
+    ] }), [story]);
+    expect(out.map((x) => x.figure)).toEqual(['97.9%']);
+  });
+  it('refuses long, hyped or em dash labels', async () => {
+    const { parseNumbers } = await import('../pipeline/numbers.mjs');
+    const em = String.fromCharCode(0x2014);
+    const out = parseNumbers(JSON.stringify({ numbers: [
+      { paper: 1, figure: '97.9%', label: 'a groundbreaking share of agents' },
+      { paper: 1, figure: '128', label: `updates ${em} long ones` },
+      { paper: 1, figure: '128', label: 'x'.repeat(95) },
+    ] }), [story]);
+    expect(out).toEqual([]);
+  });
+  it('sends only stories with traced numeric claims', async () => {
+    const { numbersData } = await import('../pipeline/numbers.mjs');
+    const d = numbersData([story, { ...story, n: 2, claims: [] }]);
+    expect(d).toMatch(/STORY 1/);
+    expect(d).not.toMatch(/STORY 2/);
+    expect(d).not.toMatch(/25% of training episodes/);
+  });
+});
+
+describe('data labels never reach readers', () => {
+  it('a story that writes "No SOURCES" fails with label_leak', () => {
+    const p = papers[1];
+    const r = checkStory({ ...SAMPLE['9'], body: `${SAMPLE['9'].body} No SOURCES have weighed in yet.` }, ctx());
+    expect(r.fails.map((f) => f.code)).toContain('label_leak');
+    expect(p).toBeTruthy();
+  });
+});
