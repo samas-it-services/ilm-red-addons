@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import { useStrings } from './useStrings';
 import { ALL_LEVELS, type TermPrefs } from './types';
 
-const SAMPLE: Record<string, string> = { easy: 'border-dotted border-muted-foreground', advanced: 'border-dashed border-muted-foreground', expert: 'border-solid border-foreground' };
+/** Underline samples on a filled pill: the line takes the pill's text colour. */
+const SAMPLE_ON: Record<string, string> = { easy: 'border-dotted border-current', advanced: 'border-dashed border-current', expert: 'border-solid border-current' };
 
 /**
  * "Highlight terms" plus one button per level. Off means terms are plain text, not links. The "inline" variant
@@ -13,19 +14,24 @@ export function TermSwitch({ prefs, onChange, end, variant = 'bar' }: { prefs: T
   if (variant === 'inline') {
     return (
       <div role="group" aria-label={s('terms.group')} className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-        <span className="inline-flex items-center gap-3">
+        {/* Each level is a clear on/off pill: filled when its terms are underlined, faded and struck through when not.
+            Before, the buttons barely changed and readers took them for a broken reading-level switch. */}
+        <span className="inline-flex flex-wrap items-center gap-2">
+          <span className="font-sans text-xs">{s('terms.levels')}</span>
           {ALL_LEVELS.map((l) => {
             const on = prefs.levels.includes(l);
+            const title = `${s(`level.${l}` as const)}: ${s(on ? 'terms.tapHide' : 'terms.tapShow')}`;
             return (
               <button
                 key={l}
                 type="button"
                 aria-pressed={on}
+                title={title}
                 disabled={!prefs.highlight}
                 onClick={() => onChange({ ...prefs, levels: on ? prefs.levels.filter((x) => x !== l) : [...prefs.levels, l] })}
-                className={`min-h-11 bg-transparent px-0.5 disabled:opacity-50 ${on ? 'text-foreground' : 'text-muted-foreground line-through'}`}
+                className={`inline-flex min-h-11 items-center rounded-full border px-3 font-sans text-xs font-semibold disabled:opacity-50 ${on ? 'border-foreground bg-foreground text-background' : 'border-muted-foreground text-muted-foreground line-through'}`}
               >
-                <span className={`border-b-2 ${SAMPLE[l]}`}>{s(`level.${l}` as const)}</span>
+                <span className={`border-b-2 ${SAMPLE_ON[l]}`}>{s(`level.${l}` as const)}</span>
               </button>
             );
           })}
