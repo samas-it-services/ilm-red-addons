@@ -227,7 +227,7 @@ CREATE OR REPLACE FUNCTION gazette_voice_is_member(p_club uuid, p_actor uuid)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $fn$
   SELECT COALESCE(p_actor IS NOT NULL AND (
     EXISTS (SELECT 1 FROM book_clubs c WHERE c.id = p_club AND c.owner_id = p_actor)
-    OR EXISTS (SELECT 1 FROM book_club_members m WHERE m.book_club_id = p_club AND m.user_id = p_actor AND m.status = 'active')
+    OR EXISTS (SELECT 1 FROM book_club_members m WHERE m.book_club_id = p_club AND m.user_id = p_actor)
   ), false);
 $fn$;
 
@@ -325,7 +325,7 @@ BEGIN
 
   -- Three different members, each in the club at least a week, flagging fact or tone: show the plain story.
   IF p_kind IN ('fact', 'tone') AND EXISTS (
-       SELECT 1 FROM book_club_members m WHERE m.book_club_id = s.club_id AND m.user_id = p_actor AND m.status = 'active' AND m.joined_at <= now() - interval '7 days') THEN
+       SELECT 1 FROM book_club_members m WHERE m.book_club_id = s.club_id AND m.user_id = p_actor AND m.joined_at <= now() - interval '7 days') THEN
     INSERT INTO gazette_voice_flags (story_id, member_id, kind) VALUES (p_story, p_actor, p_kind) ON CONFLICT DO NOTHING;
     SELECT count(DISTINCT member_id) INTO v_flags FROM gazette_voice_flags WHERE story_id = p_story;
     IF v_flags >= 3 AND NOT s.flagged_plain THEN UPDATE gazette_voice_stories SET flagged_plain = true, updated_at = now() WHERE id = p_story; END IF;
