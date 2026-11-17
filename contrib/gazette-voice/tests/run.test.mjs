@@ -98,7 +98,15 @@ describe('when things go wrong', () => {
     expect(records[0]).toMatchObject({ state: 'plain', reason: 'checks_failed' });
     expect(records[0].checks.join(' ')).toMatch(/link_not_gathered \(https:\/\/example\.org\/made-up\)/);
     expect(deps.logged.map((c) => c.stage)).toContain('rewrite');
+    // The rewrite's own refusal is kept too, so the console shows why the story stayed plain.
+    expect(records[0].checks.join(' ')).toMatch(/rewrite body: link_not_gathered/);
     expect(records[1].state).toBe('ready');
+  });
+
+  it('gives the writer and the Skeptic enough room (a reasoning Skeptic spent 8,000 tokens on 16 Nov)', async () => {
+    const { MAX_TOKENS } = await import('../pipeline/run.mjs');
+    expect(MAX_TOKENS.skeptic).toBeGreaterThanOrEqual(32000);
+    expect(MAX_TOKENS.write).toBeGreaterThanOrEqual(16000);
   });
 
   it('a successful rewrite replaces the failed story', async () => {

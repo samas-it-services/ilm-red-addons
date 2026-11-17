@@ -20,6 +20,13 @@ import { labelTerms } from './levels.mjs';
 
 export const BATCH = 5;
 export const COVERAGE_TTL_MS = 24 * 3600 * 1000;
+/**
+ * Output room per stage. A batch of five stories is about 7,000 tokens, close to 8,000; the Skeptic reasons at
+ * "high" and a reasoning model can spend 8,000 tokens before it answers (seen on the first live edition,
+ * 16 Nov 2026). Room costs nothing unless it is used; the budget check estimates from expected output.
+ * @type {Record<string, number>}
+ */
+export const MAX_TOKENS = { write: 16000, rewrite: 16000, skeptic: 32000 };
 /** Expected output tokens per paper, for estimates. */
 const OUT_PER_PAPER = { scout: 220, write: 450, rewrite: 450, skeptic: 400, editor: 160, arbiter: 60, level: 40 };
 
@@ -106,7 +113,7 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
     lastRefused = false;
     const rate = config.rates[model] ?? { in: 0.003, out: 0.015 };
     const est = estimateUsd(req, rate, OUT_PER_PAPER[/** @type {keyof typeof OUT_PER_PAPER} */ (stage)] * papersInCall);
-    const full = { model, system: req.system, prompt: req.prompt, stage, maxTokens: 8000, reasoning: /** @type {'low'|'high'} */ (stage === 'skeptic' ? 'high' : 'low') };
+    const full = { model, system: req.system, prompt: req.prompt, stage, maxTokens: MAX_TOKENS[stage] ?? 8000, reasoning: /** @type {'low'|'high'} */ (stage === 'skeptic' ? 'high' : 'low') };
     if (!budget.canAfford(est)) {
       lastRefused = true;
       await deps.logCall(callRecord({ runId, storyKey, lang, req: full, reply: null, status: 'refused', error: `over budget: estimate $${est.toFixed(4)}, remaining $${budget.remaining.toFixed(4)}`, at: deps.now() }));
@@ -189,7 +196,10 @@ export async function runEdition({ runId, club, lang, papers, config, prompts, s
     try { if (text !== null) redo = parseStories(text, batch.map((/** @type {Paper} */ p) => p.n)); } catch { /* keep failing */ }
     for (const p of batch) {
       const s = redo.get(p.n);
-      if (s && checkStory(s, ctxFor(p)).ok) { stories.set(p.n, s); history.get(p.n)?.push({ stage: 'rewrite', what: `Rewrote after: ${failed.get(p.n)?.join('; ')}` }); failed.delete(p.n); }
+      const rc = s ? checkStory(s, ctxFor(p)) : null;
+      if (s && rc?.ok) { stories.set(p.n, s); history.get(p.n)?.push({ stage: 'rewrite', what: `Rewrote after: ${failed.get(p.n)?.join('; ')}` }); failed.delete(p.n); }
+      // Keep why the rewrite was refused too, so the console shows the whole reason a story stayed plain.
+      else failed.set(p.n, [...(failed.get(p.n) ?? []), ...(rc ? rc.fails.map((f) => `rewrite ${f.field}: ${f.code}${f.detail ? ` (${f.detail})` : ''}`) : ['rewrite: no story returned'])]);
     }
   }
   for (const p of papers) if (failed.has(p.n)) { plain(p, 'checks_failed', failed.get(p.n)); stories.delete(p.n); }
