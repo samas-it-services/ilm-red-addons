@@ -1,0 +1,10 @@
+/* Stand-in values for the app's tokens (light and dark). Harness only; the app's 22 themes supply the real ones. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root { --background: #f6f7f5; --foreground: #1b2422; --card-bg: #ffffff; --popover: #ffffff; --popover-foreground: #1b2422; --muted: #eceeeb; --muted-foreground: #5b6865;
+  --border: #d5dcd9; --primary: #0d6b66; --button-text: #ffffff; --accent: #5aa9a3; --ring: #0d6b66; --destructive: 179 54 43; }
+.dark { --background: #121816; --foreground: #e3ebe8; --card-bg: #18201e; --popover: #18201e; --popover-foreground: #e3ebe8; --muted: #1f2a27; --muted-foreground: #97a6a2;
+  --border: #2c3835; --primary: #5cc2b9; --button-text: #121816; --accent: #3d7f79; --ring: #5cc2b9; --destructive: 238 123 112; }
+body { background: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+.font-nastaliq { font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Noto Naskh Arabic", serif; }

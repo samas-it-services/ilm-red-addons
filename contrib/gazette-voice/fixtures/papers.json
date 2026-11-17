@@ -1,0 +1,340 @@
+{
+ "club": {
+  "id": "club_ai",
+  "slug": "ai",
+  "name": "Artificial Intelligence Collective",
+  "masthead": "The AI Gazette",
+  "finance": false
+ },
+ "week": "2026-W46",
+ "papers": [
+  {
+   "id": "book_26XnIKKEL32iPrRemoUVpt",
+   "n": 9,
+   "arxivId": "2611.12869",
+   "doi": null,
+   "title": "Where Does Alignment Emerge and What Does It Mean? A Closer Look at the Platonic Representation Hypothesis",
+   "authors": [
+    "Julia Herbst",
+    "Simon Roschmann",
+    "Quentin Bouniot",
+    "Zeynep Akata"
+   ],
+   "abstract": "The Platonic Representation Hypothesis (PRH) suggests that neural networks are converging toward similar representation spaces. As language models become more capable, their representations are aligning with those of vision models. However, recent work has questioned whether this trend continues to hold for newer language models. Moreover, it has been shown that representation similarity metrics can be confounded by model depth and width, requiring appropriate baselines for interpretation. In this work, we first investigate where alignment emerges between unimodal models across model layers and representation dimensions. Next, we find that the PRH capability-alignment trend persists for newer models as long as the captions are sufficiently clean and informative. Finally, we contextualize cross-modal alignment, introducing unimodal and multimodal baselines on various datasets. Our results show that the cross-modal representational alignment of unimodal models can surpass that of explicitly aligned vision-language models, but remains substantially behind the alignment observed for models of the same modality. Code is available at https://github.com/ExplainableML/prh-closer-look.",
+   "notes": "Language and vision models represent information in increasingly similar internal ways for newer models given clean data.",
+   "url": "https://arxiv.org/abs/2611.12869",
+   "path": "/books/science/where-does-alignment-emerge-and-what-does-it-mean-a-452ea96f",
+   "topic": "platonic representation hypothesis",
+   "terms": [
+    {
+     "name": "Platonic Representation Hypothesis (PRH)",
+     "slug": "platonic-representation-hypothesis-prh",
+     "salience": 1.0,
+     "aliases": [
+      "Platonic Representation Hypothesis",
+      "PRH"
+     ],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": "افلاطونی نمائندگی کا مفروضہ"
+    },
+    {
+     "name": "cross-modal alignment",
+     "slug": "cross-modal-alignment",
+     "salience": 1.0,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "representation space",
+     "slug": "representation-space",
+     "salience": 0.9,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "language model",
+     "slug": "language-model",
+     "salience": 0.9,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": "The invisible engine powering today's talking computers.",
+     "urName": "لسانی ماڈل"
+    },
+    {
+     "name": "vision model",
+     "slug": "vision-model",
+     "salience": 0.9,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "representation similarity metric",
+     "slug": "representation-similarity-metric",
+     "salience": 0.8,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "mutual k-nearest-neighbor overlap",
+     "slug": "mutual-k-nearest-neighbor-overlap",
+     "salience": 0.8,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "unimodal model",
+     "slug": "unimodal-model",
+     "salience": 0.8,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "vision-language model (VLM)",
+     "slug": "vision-language-model-vlm",
+     "salience": 0.7,
+     "aliases": [
+      "vision-language model",
+      "VLM"
+     ],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "principal component analysis (PCA)",
+     "slug": "principal-component-analysis-pca",
+     "salience": 0.7,
+     "aliases": [
+      "PCA"
+     ],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "model layer",
+     "slug": "model-layer",
+     "salience": 0.7,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "model depth",
+     "slug": "model-depth",
+     "salience": 0.6,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "neural network",
+     "slug": "neural-network",
+     "salience": 0.8,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "embedding",
+     "slug": "embedding",
+     "salience": 0.6,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    }
+   ]
+  },
+  {
+   "id": "book_lCN7MHhojHBIdy80l9Lgo",
+   "n": 10,
+   "arxivId": "2611.12634",
+   "doi": null,
+   "title": "How Far Does Second-Order Linear Response Predict Quantization Mismatch? Pre-Registered Measurements on Five Language Models",
+   "authors": [
+    "Dezhen Lu",
+    "Zixiang Ni"
+   ],
+   "abstract": "Serving systems choose a weight format for each model and deployment. A low-cost screen predicts the resulting KL divergence from the unquantized model's Fisher information using 1/2 Delta^T F Delta, the expansion underlying Hessian-aware and second-order post-training quantizers. We assess the reliability of this screen in GPU batches with channel-wise int8, per-tensor fp8 and group-wise int4 on Qwen3-8B, Qwen3-4B, OLMo-2-7B, Qwen3-32B and Qwen3-30B-A3B. Relative predictions hold across a 16-fold range of perturbation scales, int4 group sizes and rounding modes, while absolute predictions are heavy-tailed. A trimmed average brings 10 of 12 cells on Qwen3-4B and OLMo-2 within 15% of measured KL. The MoE model exhibits nonquadratic response at small perturbations, with int8 KL scaling as alpha^0.63. Computing per-sequence gradients in bf16 can cause fourfold prediction errors. We trace these errors to arithmetic in the lower half of the backward pass and eliminate them by using fp32 there. Batch-invariant kernels run at 0.55 times the throughput, while changes in reduction order introduce a floor of 0.17-0.22 nats per sequence. We build a screener with one streamed fp32 Fisher pass, trimmed tensor-block predictions with a band, a flag for aligned tensors and per-layer format allocation. On the unseen Mistral-7B-v0.3 family, all six predictions fall within the band, all three KL budgets are met, and vLLM throughput is predicted within 0.4%.",
+   "notes": "A look at how well a specific mathematical formula can predict the performance drop when large language models are quantized, meaning their internal numbers are simplified to save memory and speed.",
+   "url": "https://arxiv.org/abs/2611.12634",
+   "path": "/books/science/how-far-does-second-order-linear-response-predict-q-19036c81",
+   "terms": [
+    {
+     "name": "KL divergence",
+     "slug": "kl-divergence",
+     "salience": 0.9,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "Fisher information",
+     "slug": "fisher-information",
+     "salience": 0.9,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "large language model",
+     "slug": "large-language-model",
+     "salience": 0.8,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "data type",
+     "slug": "data-type",
+     "salience": 0.7,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "backward pass",
+     "slug": "backward-pass",
+     "salience": 0.6,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "gradient",
+     "slug": "gradient",
+     "salience": 0.5,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": "How do machines find their way to the best answer?",
+     "urName": null
+    },
+    {
+     "name": "Mixture-of-Experts model",
+     "slug": "mixture-of-experts-model",
+     "salience": 0.5,
+     "aliases": [
+      "mixture of experts",
+      "MoE"
+     ],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "GPU",
+     "slug": "gpu",
+     "salience": 0.4,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "throughput",
+     "slug": "throughput",
+     "salience": 0.4,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "tensor",
+     "slug": "tensor",
+     "salience": 0.4,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "trimmed average",
+     "slug": "trimmed-average",
+     "salience": 0.3,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "Hessian-aware quantizer",
+     "slug": "hessian-aware-quantizer",
+     "salience": 0.3,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "kernel",
+     "slug": "kernel",
+     "salience": 0.2,
+     "aliases": [],
+     "curatorLevel": null,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    },
+    {
+     "name": "quantization",
+     "slug": "quantization",
+     "salience": 1.0,
+     "aliases": [],
+     "curatorLevel": 3,
+     "savedLabel": null,
+     "hook": null,
+     "urName": null
+    }
+   ]
+  }
+ ]
+}

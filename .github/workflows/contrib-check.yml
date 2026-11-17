@@ -1,0 +1,34 @@
+# Checks for hand-written add-ons in contrib/ on every pull request and on pushes to master.
+# The generated folders (addons/, notebooks/) are not checked here: they come from the ilm.red app.
+name: Contrib checks
+
+on:
+  pull_request:
+    paths: ['contrib/**', '.github/workflows/contrib-check.yml']
+  push:
+    branches: [master]
+    paths: ['contrib/**', '.github/workflows/contrib-check.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contrib
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: contrib/package-lock.json
+      - run: npm ci
+      - name: Secrets, em dashes, pipeline isolation, manifests
+        run: npm run check
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Tests
+        run: npm test

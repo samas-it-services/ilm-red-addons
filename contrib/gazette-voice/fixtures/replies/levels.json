@@ -1,0 +1,17 @@
+{
+ "platonic-representation-hypothesis-prh": "advanced",
+ "vision-model": "easy",
+ "language-model": "easy",
+ "representation-similarity-metric": "expert",
+ "model-depth": "easy",
+ "unimodal-model": "advanced",
+ "cross-modal-alignment": "advanced",
+ "vision-language-model-vlm": "advanced",
+ "kl-divergence": "advanced",
+ "fisher-information": "expert",
+ "hessian-aware-quantizer": "expert",
+ "mixture-of-experts-model": "advanced",
+ "gradient": "easy",
+ "backward-pass": "advanced",
+ "quantization": "easy"
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Rebuilt from the successful Google News run of 16 Nov 2026 (10:5x PT): titles, dates and outlets as returned;
+     links are the publishers' own URLs found by web search, because Google News links are redirects.
+     The live run at 14:05 PT got a "Sorry..." block page instead (see news-2611.12869.xml). -->
+<rss version="2.0"><channel><title>"platonic representation hypothesis" - Google News</title>
+<item><title>Distinct AI Models Seem To Converge On How They Encode Reality - Quanta Magazine</title><link>https://www.quantamagazine.org/distinct-ai-models-seem-to-converge-on-how-they-encode-reality-20260107/</link><pubDate>Wed, 07 Jan 2026 08:00:00 GMT</pubDate><description>Is the inside of a vision model at all like a language model? Researchers argue that as the models grow more powerful, they may be converging toward a singular Platonic way to represent the world.</description><source url="https://www.quantamagazine.org">Quanta Magazine</source></item>
+<item><title>Do AI systems learn the same view of the world? - EPFL</title><link>https://ai.epfl.ch/do-ai-systems-learn-the-same-view-of-the-world/</link><pubDate>Mon, 08 Jun 2026 08:00:00 GMT</pubDate><description>As AI models get bigger and more complex, the similarity scores can naturally go up, even if the models are not actually learning the same underlying structure of the world.</description><source url="https://ai.epfl.ch">EPFL</source></item>
+<item><title>Proving and Improving the Platonic Representation Hypothesis with JEPAs - alphaXiv</title><link>https://www.alphaxiv.org/abs/2610.39302</link><pubDate>Thu, 29 Oct 2026 08:00:00 GMT</pubDate><description>alphaXiv discussion page.</description><source url="https://www.alphaxiv.org">alphaXiv</source></item>
+</channel></rss>

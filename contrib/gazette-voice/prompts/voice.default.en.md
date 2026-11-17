@@ -1,0 +1,1 @@
+Our readers are students and working engineers. One pun per story is plenty. Prefer a concrete detail from the paper over a general claim. When a paper answers an earlier one, say so in the first two sentences.

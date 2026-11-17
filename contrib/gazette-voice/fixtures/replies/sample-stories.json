@@ -1,0 +1,20 @@
+{
+ "9": {
+  "headline": "Plato's Cave Gets Cleaner Captions, and the Shadows Line Up Again",
+  "dept": "from the garbage-in-forms-out dept.",
+  "body": "Remember the Platonic Representation Hypothesis? [The 2024 claim from MIT](https://arxiv.org/abs/2405.07987) was that vision models and language models drift toward the same inner picture of the world as they get more capable, which [Quanta](https://www.quantamagazine.org/distinct-ai-models-seem-to-converge-on-how-they-encode-reality-20260107/) says set off a lively debate. Then [an EPFL team](https://arxiv.org/abs/2602.14486) showed that common representation similarity metrics rise with model depth and width on their own, and much of the global agreement faded once they corrected for it. [A new paper](https://arxiv.org/abs/2611.12869) by Herbst, Roschmann, Bouniot and Akata says the trend survives in newer language models, provided the image captions are clean and informative. And unimodal models can reach better cross-modal alignment than vision-language models built to pair them, yet still trail far behind two models of the same kind. [The code is up](https://github.com/ExplainableML/prh-closer-look). In a [recent Hacker News thread](https://news.ycombinator.com/item?id=50325454) on a related JEPA paper, one commenter wondered if the hypothesis just means there is a best way to compress data, and bigger models find it.",
+  "question": "So is this convergence on reality, or just everyone copying from the same well-captioned homework?"
+ },
+ "10": {
+  "headline": "A Cheap Quantization Screen That Mostly Tells the Truth",
+  "dept": "from the close-enough-for-int8 dept.",
+  "body": "Quantization saves memory, but before shipping a model in int8, fp8 or int4, serving teams want to know how far it will drift from the full-precision original. [Dezhen Lu and Zixiang Ni](https://arxiv.org/abs/2611.12634) pre-registered a test of the second-order shortcut behind Hessian-aware quantizers, which predicts that drift (the KL divergence) from Fisher information, on five models including OLMo-2-7B, Qwen3-32B and the Qwen3-30B-A3B mixture of experts. The ranking it predicts holds over a 16-fold range of perturbation sizes; the exact numbers have heavy tails. The best part is a bug hunt: per-sequence gradients computed in bf16 caused fourfold prediction errors, cured by doing part of the backward pass in fp32. On the unseen Mistral-7B-v0.3 family, all six predictions landed inside the band. Nobody has written this one up yet, so you are early.",
+  "question": "Would you trust a screen that gets the ranking right but the number only roughly?"
+ },
+ "9ur": {
+  "headline": "افلاطون کے غار میں صاف کیپشن، اور سائے پھر ایک ہو گئے",
+  "dept": "شعبۂ جیسا کیپشن، ویسا افلاطون",
+  "body": "یاد ہے ۲۰۲۴ کا افلاطونی نمائندگی کا مفروضہ؟ ([اصل مقالہ](https://arxiv.org/abs/2405.07987)) ایم آئی ٹی کے محققین کا کہنا تھا کہ تصویر اور زبان کے ماڈل جتنے قابل ہوتے جاتے ہیں، اندر ہی اندر دنیا کی ایک جیسی تصویر بنانے لگتے ہیں۔ [کوانٹا میگزین](https://www.quantamagazine.org/distinct-ai-models-seem-to-converge-on-how-they-encode-reality-20260107/) کے مطابق اس خیال پر محققین میں خوب بحث چھڑی۔ پھر [ای پی ایف ایل کی ایک ٹیم](https://arxiv.org/abs/2602.14486) نے دکھایا کہ ماڈل جتنا بڑا ہو، مشابہت کا اسکور خود بخود بڑھ جاتا ہے، اور یہ اثر نکالا تو مجموعی ہم آہنگی کافی حد تک غائب ہو گئی۔ اب [ایک نیا مقالہ](https://arxiv.org/abs/2611.12869) کہتا ہے کہ نئے لسانی ماڈلز میں بھی یہ رجحان قائم ہے، بشرطیکہ تصویروں کے کیپشن صاف اور معلومات سے بھرپور ہوں۔ اس کے مطابق الگ الگ تربیت پانے والے ماڈل، تصویر اور متن جوڑنے کے لیے بنائے گئے ماڈلز سے بھی بہتر میل کھا سکتے ہیں، مگر ایک ہی قسم کے دو ماڈلز سے بہت پیچھے رہتے ہیں۔ [کوڈ بھی دستیاب ہے](https://github.com/ExplainableML/prh-closer-look)۔ [ہیکر نیوز](https://news.ycombinator.com/item?id=50325454) پر ایک ملتے جلتے مقالے کی بحث میں ایک تبصرہ نگار نے سوچا کہ کہیں یہ سارا مفروضہ بس اتنا تو نہیں کہتا کہ ڈیٹا سمیٹنے کا ایک بہترین طریقہ موجود ہے اور بڑے ماڈل اسے ڈھونڈ لیتے ہیں۔",
+  "question": "تو یہ حقیقت پر اتفاق ہے، یا سب ماڈل ایک ہی صاف ستھری کاپی سے نقل کر رہے ہیں؟"
+ }
+}
