@@ -58,3 +58,10 @@ describe('Urdu Newsroom', () => {
     expect(codes).toEqual(expect.arrayContaining(['roman_text', 'urdu_coinage']));
   });
 });
+
+describe('Urdu batch size and pricing', () => {
+  it('writes Urdu three stories at a time and English five (Urdu needs about twice the output)', async () => {
+    const { WRITE_BATCH } = await import('../pipeline/run.mjs');
+    expect(WRITE_BATCH).toEqual({ en: 5, ur: 3 });
+  });
+});
