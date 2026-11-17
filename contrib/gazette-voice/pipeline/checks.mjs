@@ -54,6 +54,9 @@ export function deptOk(dept, lang, l) {
   return n >= l.deptMin && n <= l.deptMax;
 }
 
+/** The data labels the prompts use, in capitals as they are written there. */
+export const LABEL_LEAK = /\b(PAPER|NOTES|SOURCES|TERMS|READER CORRECTIONS)\b/;
+
 /**
  * @param {Story} story
  * @param {CheckContext} ctx
@@ -73,6 +76,9 @@ export function checkStory(story, ctx) {
     if (ctx.lang === 'ur') for (const c of URDU_COINAGES) if (normUrdu(v).includes(c)) fails.push({ field: f, code: 'urdu_coinage', detail: c });
     if (ctx.lang === 'ur' && f !== 'body' && /[a-z]{4,}/i.test(v.replace(/\(.*?\)/g, ''))) fails.push({ field: f, code: 'roman_text' });
     if (ctx.finance && ADVICE_EN.test(v)) fails.push({ field: f, code: 'advice' });
+    // The data labels are for the model, never for readers ("No SOURCES have weighed in yet", 16 Nov 2026).
+    const leak = v.match(LABEL_LEAK);
+    if (leak) fails.push({ field: f, code: 'label_leak', detail: leak[0] });
   }
   const headlineChars = [...String(story.headline ?? '')].length;
   if (headlineChars > l.headlineChars) fails.push({ field: 'headline', code: 'too_long', detail: `${headlineChars} > ${l.headlineChars}` });
