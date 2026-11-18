@@ -203,6 +203,19 @@ describe('the Week in Numbers', () => {
     ] }), [story]);
     expect(out).toEqual([]);
   });
+  it('a figure must be a measured amount, not a name with a digit in it (week 46 Physics: "SU(4)", "1/f")', async () => {
+    const { isStatistic, parseNumbers } = await import('../pipeline/numbers.mjs');
+    for (const ok of ['97.9%', '896 GPU-days', '7.4 points', '145', '0.4%', '3x', '$1.2 billion', '~40 ms', '100']) expect(isStatistic(ok), ok).toBe(true);
+    for (const bad of ['SU(4)', '1/f', 'GPT-4', '10^6', '2024', 'O(n)', 'H100', 'Llama-3', '']) expect(isStatistic(bad), bad).toBe(false);
+    const phys = { n: 1, paperId: 'p1', headline: 'H', body: 'SU(4) results under 1/f noise pushed the coefficient above 100.',
+      claims: [{ text: 'uses SU(4) results; 1/f noise; coefficient above 100', status: 'supported' }] };
+    const out = parseNumbers(JSON.stringify({ numbers: [
+      { paper: 1, figure: 'SU(4)', label: 'Lattice test uses SU(4) results' },
+      { paper: 1, figure: '1/f', label: 'A driven qubit faces 1/f noise' },
+      { paper: 1, figure: '100', label: 'Anomaly coefficient forced above 100' },
+    ] }), [phys]);
+    expect(out.map((x) => x.figure)).toEqual(['100']);
+  });
   it('sends only stories with traced numeric claims', async () => {
     const { numbersData } = await import('../pipeline/numbers.mjs');
     const d = numbersData([story, { ...story, n: 2, claims: [] }]);
