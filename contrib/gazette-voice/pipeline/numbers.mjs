@@ -19,6 +19,20 @@ export const LABEL_MAX = 90;
 
 const plain = (/** @type {string} */ s) => s.replace(/\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1');
 const hasDigit = (/** @type {string} */ s) => /\d/.test(latinDigits(s));
+
+/**
+ * A figure must be a measured amount: a number, optionally with a sign, a currency, a %, x or a short unit after it
+ * ("97.9%", "896 GPU-days", "7.4 points", "$1.2 billion", "3x"). Names that merely contain digits are refused:
+ * symmetry groups and model names ("SU(4)", "GPT-4"), notation ("1/f", "10^6"), and bare years ("2024").
+ * Week 46 Physics printed "SU(4)" and "1/f" as figures.
+ */
+const FIGURE_RE = /^[~≈<>+\-−]?\s?[$€£]?\d[\d,]*(?:\.\d+)?\s?(?:%|x|×|[kKMB]|bn)?(?:\s?[A-Za-z][A-Za-z-]{0,14}(?:\s[A-Za-z][A-Za-z-]{0,14})?)?$/;
+export function isStatistic(/** @type {string} */ figure) {
+  const f = latinDigits(String(figure ?? '')).trim();
+  if (!f || f.length > 16 || !FIGURE_RE.test(f)) return false;
+  if (/^(19|20)\d\d$/.test(f)) return false;
+  return true;
+}
 /** Traced claims that carry a number, the only ones a figure may come from. @param {NumbersStory} s */
 export const checkedClaims = (s) => s.claims.filter((c) => c.status === 'supported' && hasDigit(c.text) && !/^link anchor/i.test(c.text));
 
@@ -45,7 +59,7 @@ export function parseNumbers(text, stories) {
     const s = stories.find((y) => y.n === Number(x?.paper));
     const figure = String(x?.figure ?? '').trim();
     const label = String(x?.label ?? '').trim();
-    if (!s || !figure || !hasDigit(figure) || figure.length > 16 || !label || label.length > LABEL_MAX) continue;
+    if (!s || !figure || !isStatistic(figure) || !label || label.length > LABEL_MAX) continue;
     if (EM_DASH_RE.test(label) || HYPE.some((h) => label.toLowerCase().includes(h))) continue;
     const digits = latinDigits(figure).match(/\d+(?:[.,]\d+)?/)?.[0] ?? '';
     if (!digits || !latinDigits(plain(s.body)).includes(digits)) continue;
